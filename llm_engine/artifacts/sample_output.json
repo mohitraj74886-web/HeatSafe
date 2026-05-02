@@ -1,0 +1,57 @@
+{
+  "sample_input": "road construction worker",
+  "worker_profile": {
+    "raw_input_normalized": "road construction laborer, breaking stones",
+    "occupation_english": "road construction laborer",
+    "occupation_category": "construction",
+    "work_intensity": "heavy",
+    "metabolic_rate_watts_m2": 352.0,
+    "metabolic_rate_total_watts": 415.0,
+    "clothing_type": "construction_helmet_vest",
+    "clothing_adjustment_factor": 1.0,
+    "typical_outdoor_fraction": 1.0,
+    "typical_direct_sun_fraction": 0.85,
+    "profiling_confidence": 0.92,
+    "ambiguity_flags": [],
+    "conservative_fallback_applied": false
+  },
+  "heat_result": {
+    "wet_bulb_temp_c": 16.22,
+    "wbgt_outdoor_c": 22.26,
+    "wbgt_adjusted_c": 23.26,
+    "niosh_rel_c": 22.2,
+    "niosh_ral_c": 20.0,
+    "pct_of_rel": 104.8,
+    "heat_strain_index": 5.71,
+    "risk_level": "warning",
+    "max_continuous_work_min": 30,
+    "required_rest_min_per_hr": 30,
+    "water_intake_ml_per_hr": 960,
+    "safe_to_work": false,
+    "immediate_action_required": false,
+    "alert_en": "WARNING: Heat stress is HIGH (HSI=5.7/10) for road construction laborer at 29\u00b0C. You can work MAX 30 minutes continuously, then MUST rest 30 minutes in shade. Drink 240ml water every 15 minutes. Watch for symptoms: dizziness, nausea, stopping sweating.",
+    "alert_hi": "[Translation pending \u2014 IndicTrans2 module]",
+    "calculation_trace": {
+      "input_temp_c": 29.32,
+      "input_humidity_pct": 23.0,
+      "wet_bulb_c": 16.22,
+      "wbgt_raw_c": 22.26,
+      "outdoor_fraction": 1.0,
+      "effective_wbgt_c": 22.26,
+      "clothing_caf": 1.0,
+      "wbgt_adjusted_c": 23.26,
+      "niosh_rel_c": 22.2,
+      "pct_of_rel": 104.8,
+      "metabolic_rate_w_m2": 352,
+      "is_acclimatized": false,
+      "hours_worked": 3.0,
+      "formula_sources": [
+        "Wet-bulb: Stull 2011",
+        "WBGT: Liljegren simplified outdoor model",
+        "REL: NIOSH 2016-106 Table B-2",
+        "CAF: NIOSH 2016-106 Table B-3",
+        "HSI: Logistic function calibrated to NIOSH REL"
+      ]
+    }
+  }
+}

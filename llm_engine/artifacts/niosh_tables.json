@@ -1,0 +1,117 @@
+{
+  "work_categories": {
+    "light": {
+      "metabolic_rate_watts_m2": 117,
+      "metabolic_rate_total_w": 180,
+      "example_occupations": [
+        "office work",
+        "sitting assembly",
+        "writing",
+        "driving",
+        "tailoring",
+        "sewing",
+        "typing",
+        "shopkeeper",
+        "cashier",
+        "call center",
+        "security guard (sitting)",
+        "teacher",
+        "toll booth operator"
+      ],
+      "niosh_rel_wbgt_acclimatized_c": 30.0,
+      "niosh_rel_wbgt_not_acclimatized_c": 28.0,
+      "niosh_ral_wbgt_c": 25.0,
+      "description": "Sitting or standing, minor arm/hand work"
+    },
+    "moderate": {
+      "metabolic_rate_watts_m2": 234,
+      "metabolic_rate_total_w": 300,
+      "example_occupations": [
+        "auto mechanic",
+        "carpenter (light)",
+        "plumber (indoor)",
+        "painter",
+        "electrician",
+        "cooking",
+        "cleaning",
+        "domestic worker",
+        "street vendor (walking)",
+        "delivery person",
+        "warehouse packing",
+        "school peon",
+        "gardener (light)",
+        "nursing",
+        "hospital ward work"
+      ],
+      "niosh_rel_wbgt_acclimatized_c": 26.7,
+      "niosh_rel_wbgt_not_acclimatized_c": 24.4,
+      "niosh_ral_wbgt_c": 22.8,
+      "description": "Walking, moderate arm/leg work, carrying up to 10kg"
+    },
+    "heavy": {
+      "metabolic_rate_watts_m2": 352,
+      "metabolic_rate_total_w": 415,
+      "example_occupations": [
+        "construction worker",
+        "road worker",
+        "brick layer",
+        "loading/unloading",
+        "manual laborer",
+        "mazdoor",
+        "coolie",
+        "rickshaw puller",
+        "farmer (manual tilling)",
+        "sugarcane cutter",
+        "coal loader",
+        "garbage collector",
+        "landscaping (heavy)",
+        "railway track worker",
+        "demolition worker"
+      ],
+      "niosh_rel_wbgt_acclimatized_c": 25.0,
+      "niosh_rel_wbgt_not_acclimatized_c": 22.2,
+      "niosh_ral_wbgt_c": 20.0,
+      "description": "Intense arm/leg work, carrying >10kg, digging, shoveling"
+    },
+    "very_heavy": {
+      "metabolic_rate_watts_m2": 468,
+      "metabolic_rate_total_w": 520,
+      "example_occupations": [
+        "mine worker (heavy)",
+        "steel mill worker",
+        "furnace operator",
+        "blacksmith",
+        "continuous heavy lifting >30kg",
+        "professional athlete training",
+        "firefighter (active)"
+      ],
+      "niosh_rel_wbgt_acclimatized_c": 22.2,
+      "niosh_rel_wbgt_not_acclimatized_c": 20.0,
+      "niosh_ral_wbgt_c": 18.0,
+      "description": "Maximum sustained effort, very heavy tools/loads"
+    }
+  },
+  "clothing_caf": {
+    "summer_work_clothes": 0.0,
+    "cotton_coverall": 3.5,
+    "double_layer_coverall": 5.0,
+    "synthetic_coverall": 0.5,
+    "reflective_suit": 11.0,
+    "saree_kurta": 2.0,
+    "construction_helmet_vest": 1.0,
+    "full_ppe_no_scba": 3.5
+  },
+  "work_rest_schedule": {
+    "100": 0,
+    "75": 15,
+    "50": 30,
+    "25": 45
+  },
+  "source": "NIOSH Publication No. 2016-106",
+  "formula_sources": {
+    "wet_bulb": "Stull (2011) doi:10.1175/JAMC-D-11-0143.1",
+    "wbgt": "Liljegren et al. simplified outdoor model",
+    "rel": "NIOSH 2016-106 Table B-2",
+    "caf": "NIOSH 2016-106 Table B-3"
+  }
+}

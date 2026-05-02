@@ -1,0 +1,31 @@
+{
+  "origin": {
+    "lat": 30.3248,
+    "lon": 78.0435
+  },
+  "destination": {
+    "lat": 30.3159,
+    "lon": 78.0324
+  },
+  "cool_route": {
+    "total_length_m": 2261.807963022673,
+    "mean_shade_score": 0.17550684609781345,
+    "heat_exposure_pct": 82.44931539021866,
+    "n_segments": 31,
+    "shelters_count": 0
+  },
+  "shortest_route": {
+    "total_length_m": 1676.6881970416784,
+    "mean_shade_score": 0.12087269319259805
+  },
+  "comparison": {
+    "shade_improvement_pct": 45.199748150032164,
+    "extra_distance_m": 585.1197659809945,
+    "extra_distance_pct": 34.9
+  },
+  "conditions": {
+    "solar_elevation_deg": 0.0,
+    "computed_at": "now"
+  },
+  "shelters": []
+}

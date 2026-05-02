@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-05-02T21:43:09.903825",
+  "total_chunks": 991,
+  "total_vectors": 991,
+  "retrieval": {
+    "mrr": 1.0,
+    "recall_at3": 1.0,
+    "recall_at5": 1.0,
+    "ctx_precision_mean": 1.0
+  },
+  "latency_ms": {
+    "p50": 671.2,
+    "p95": 4364.8,
+    "mean": 1317.6
+  },
+  "generation": {
+    "grounding_rate": 1.0,
+    "refusal_rate": 1.0
+  }
+}

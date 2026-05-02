@@ -1,0 +1,186 @@
+{
+  "features": [
+    "road_width",
+    "road_orientation_deg",
+    "is_oneway",
+    "highway_enc",
+    "surface_enc",
+    "surface_factor",
+    "building_height_mean",
+    "shadow_mean",
+    "shadow_peak",
+    "shadow_min",
+    "shadow_noon",
+    "sun_elevation_noon",
+    "tree_count_log",
+    "tree_density_log",
+    "building_count_log",
+    "length_m_log"
+  ],
+  "target": "shade_score",
+  "highway_classes": [
+    "living_street",
+    "primary",
+    "primary_link",
+    "residential",
+    "secondary",
+    "secondary_link",
+    "tertiary",
+    "tertiary_link",
+    "trunk",
+    "trunk_link",
+    "unclassified"
+  ],
+  "surface_classes": [
+    "asphalt"
+  ],
+  "highway_width_proxy": {
+    "motorway": 14,
+    "motorway_link": 7,
+    "trunk": 12,
+    "trunk_link": 6,
+    "primary": 10,
+    "primary_link": 5,
+    "secondary": 8,
+    "secondary_link": 4,
+    "tertiary": 6,
+    "tertiary_link": 3,
+    "residential": 4.5,
+    "living_street": 4,
+    "service": 3,
+    "unclassified": 5,
+    "footway": 2,
+    "path": 1.5,
+    "cycleway": 2
+  },
+  "surface_shade_factor": {
+    "asphalt": 0.0,
+    "paved": 0.0,
+    "concrete": 0.1,
+    "gravel": 0.3,
+    "dirt": 0.4,
+    "grass": 0.7,
+    "cobblestone": 0.2,
+    "sand": 0.2,
+    "ground": 0.35
+  },
+  "log_cols": [
+    "tree_count",
+    "tree_density",
+    "building_count",
+    "length_m"
+  ],
+  "clip_cols": [
+    "building_height_mean",
+    "road_width",
+    "tree_density"
+  ],
+  "city": "Dehradun, Uttarakhand, India",
+  "lat": 30.3165,
+  "lon": 78.0322,
+  "timezone": "Asia/Kolkata",
+  "tree_radius": 50,
+  "building_radius": 80,
+  "best_params": {
+    "max_depth": 5,
+    "min_child_weight": 20,
+    "n_estimators": 613,
+    "learning_rate": 0.058006322999333615,
+    "subsample": 0.5780093202212182,
+    "colsample_bytree": 0.49359671220172163,
+    "colsample_bylevel": 0.4348501673009197,
+    "reg_alpha": 0.6245760287469893,
+    "reg_lambda": 0.002570603566117598,
+    "gamma": 3.540362888980227
+  },
+  "test_metrics": {
+    "rmse": 0.03258687281537696,
+    "mae": 0.02571659569192367,
+    "r2": 0.8037272134680864,
+    "mape": 356288758759540.1
+  },
+  "cv_rmse_mean": 0.033256306773543895,
+  "cv_r2_mean": 0.7981741431672839,
+  "shap_feature_ranking": [
+    {
+      "rank": 1,
+      "feature": "tree_density_log",
+      "mean_shap": 0.011183449998497963
+    },
+    {
+      "rank": 2,
+      "feature": "shadow_peak",
+      "mean_shap": 0.00755310757085681
+    },
+    {
+      "rank": 3,
+      "feature": "tree_count_log",
+      "mean_shap": 0.0063675083220005035
+    },
+    {
+      "rank": 4,
+      "feature": "shadow_mean",
+      "mean_shap": 0.005931246094405651
+    },
+    {
+      "rank": 5,
+      "feature": "building_height_mean",
+      "mean_shap": 0.005206619389355183
+    },
+    {
+      "rank": 6,
+      "feature": "shadow_min",
+      "mean_shap": 0.0031176446937024593
+    },
+    {
+      "rank": 7,
+      "feature": "shadow_noon",
+      "mean_shap": 0.002343948697671294
+    },
+    {
+      "rank": 8,
+      "feature": "building_count_log",
+      "mean_shap": 0.0009152531856670976
+    },
+    {
+      "rank": 9,
+      "feature": "length_m_log",
+      "mean_shap": 0.00032618865952827036
+    },
+    {
+      "rank": 10,
+      "feature": "sun_elevation_noon",
+      "mean_shap": 0.0
+    },
+    {
+      "rank": 11,
+      "feature": "surface_factor",
+      "mean_shap": 0.0
+    },
+    {
+      "rank": 12,
+      "feature": "surface_enc",
+      "mean_shap": 0.0
+    },
+    {
+      "rank": 13,
+      "feature": "highway_enc",
+      "mean_shap": 0.0
+    },
+    {
+      "rank": 14,
+      "feature": "is_oneway",
+      "mean_shap": 0.0
+    },
+    {
+      "rank": 15,
+      "feature": "road_orientation_deg",
+      "mean_shap": 0.0
+    },
+    {
+      "rank": 16,
+      "feature": "road_width",
+      "mean_shap": 0.0
+    }
+  ]
+}

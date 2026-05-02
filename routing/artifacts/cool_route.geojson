@@ -1,0 +1,932 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0432246,
+            30.324555300000004
+          ],
+          [
+            78.0430588,
+            30.32441419999999
+          ],
+          [
+            78.0429397,
+            30.324303299999993
+          ],
+          [
+            78.0428229,
+            30.324172299999997
+          ],
+          [
+            78.0427202,
+            30.324051399999995
+          ],
+          [
+            78.0426105,
+            30.323936499999995
+          ],
+          [
+            78.0425077,
+            30.323855900000005
+          ],
+          [
+            78.0423653,
+            30.3237753
+          ],
+          [
+            78.0422219,
+            30.3237052
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1731,
+        "thermal_cost": 994.389558,
+        "length_m": 136.26123181394118,
+        "route_type": "cool",
+        "color": "#ec5c3b",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0422219,
+            30.3237052
+          ],
+          [
+            78.0422798,
+            30.3235749
+          ],
+          [
+            78.0426173,
+            30.32290080000001
+          ],
+          [
+            78.0426512,
+            30.322832999999985
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1697,
+        "thermal_cost": 771.802919,
+        "length_m": 105.38623477107096,
+        "route_type": "cool",
+        "color": "#eb5a3a",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0426512,
+            30.322832999999985
+          ],
+          [
+            78.0425349,
+            30.32277469999999
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1516,
+        "thermal_cost": 96.316913,
+        "length_m": 12.908666903148973,
+        "route_type": "cool",
+        "color": "#e54e35",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0425349,
+            30.32277469999999
+          ],
+          [
+            78.04246640000001,
+            30.322663300000006
+          ],
+          [
+            78.0423504,
+            30.322474500000006
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1697,
+        "thermal_cost": 276.737782,
+        "length_m": 37.78730574074008,
+        "route_type": "cool",
+        "color": "#eb5a3a",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0423504,
+            30.322474500000006
+          ],
+          [
+            78.0421182,
+            30.322444300000004
+          ],
+          [
+            78.0414073,
+            30.32248249999998
+          ],
+          [
+            78.0407287,
+            30.322413999999995
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1629,
+        "thermal_cost": 1154.122532,
+        "length_m": 156.48368806691605,
+        "route_type": "cool",
+        "color": "#e95538",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0407287,
+            30.322413999999995
+          ],
+          [
+            78.0404352,
+            30.3220364
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1731,
+        "thermal_cost": 368.986957,
+        "length_m": 50.562294155463846,
+        "route_type": "cool",
+        "color": "#ec5c3b",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0404352,
+            30.3220364
+          ],
+          [
+            78.0403776,
+            30.3219622
+          ],
+          [
+            78.040126,
+            30.321689500000005
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1697,
+        "thermal_cost": 356.629556,
+        "length_m": 48.696169875992695,
+        "route_type": "cool",
+        "color": "#eb5a3a",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.040126,
+            30.321689500000005
+          ],
+          [
+            78.0397607,
+            30.3213221
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1697,
+        "thermal_cost": 394.276648,
+        "length_m": 53.836711865440236,
+        "route_type": "cool",
+        "color": "#eb5a3a",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0397607,
+            30.3213221
+          ],
+          [
+            78.039527,
+            30.3210962
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1697,
+        "thermal_cost": 246.635548,
+        "length_m": 33.67698032188652,
+        "route_type": "cool",
+        "color": "#eb5a3a",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.039527,
+            30.3210962
+          ],
+          [
+            78.0394072,
+            30.320977700000004
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1697,
+        "thermal_cost": 128.078573,
+        "length_m": 17.488555936914643,
+        "route_type": "cool",
+        "color": "#eb5a3a",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0394072,
+            30.320977700000004
+          ],
+          [
+            78.03873720000001,
+            30.320296600000002
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1697,
+        "thermal_cost": 727.638329,
+        "length_m": 99.35575760150078,
+        "route_type": "cool",
+        "color": "#eb5a3a",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.03873720000001,
+            30.320296600000002
+          ],
+          [
+            78.0386774,
+            30.320333799999993
+          ],
+          [
+            78.0386606,
+            30.320348100000004
+          ],
+          [
+            78.0386224,
+            30.320404599999996
+          ],
+          [
+            78.03860140000002,
+            30.3204294
+          ],
+          [
+            78.0384459,
+            30.32055859999999
+          ],
+          [
+            78.0384411,
+            30.320575099999996
+          ],
+          [
+            78.0384433,
+            30.320590999999993
+          ],
+          [
+            78.0384916,
+            30.32068259999999
+          ],
+          [
+            78.03850130000001,
+            30.32073219999999
+          ],
+          [
+            78.0384964,
+            30.320770000000007
+          ],
+          [
+            78.0384857,
+            30.320808800000002
+          ],
+          [
+            78.03846,
+            30.3208431
+          ],
+          [
+            78.0381516,
+            30.321067400000004
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1697,
+        "thermal_cost": 828.422357,
+        "length_m": 113.11736561606003,
+        "route_type": "cool",
+        "color": "#eb5a3a",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0381516,
+            30.321067400000004
+          ],
+          [
+            78.0379528,
+            30.321195800000005
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 1.0,
+        "thermal_cost": 2.383188228025603,
+        "length_m": 23.83188228025603,
+        "route_type": "cool",
+        "color": "#006837",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0379528,
+            30.321195800000005
+          ],
+          [
+            78.0375149,
+            30.321523300000003
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1697,
+        "thermal_cost": 407.285487,
+        "length_m": 55.613010647325936,
+        "route_type": "cool",
+        "color": "#eb5a3a",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0375149,
+            30.321523300000003
+          ],
+          [
+            78.0364481,
+            30.3208068
+          ],
+          [
+            78.035425,
+            30.320336399999995
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1697,
+        "thermal_cost": 1765.009511,
+        "length_m": 241.00415016982893,
+        "route_type": "cool",
+        "color": "#eb5a3a",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.035425,
+            30.320336399999995
+          ],
+          [
+            78.0353469,
+            30.320282799999994
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1697,
+        "thermal_cost": 70.137898,
+        "length_m": 9.577016168258751,
+        "route_type": "cool",
+        "color": "#eb5a3a",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0353469,
+            30.320282799999994
+          ],
+          [
+            78.0348173,
+            30.320028899999986
+          ],
+          [
+            78.0345062,
+            30.319834399999987
+          ],
+          [
+            78.034065,
+            30.319385799999992
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1697,
+        "thermal_cost": 1175.086355,
+        "length_m": 160.4527831799595,
+        "route_type": "cool",
+        "color": "#eb5a3a",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.034065,
+            30.319385799999992
+          ],
+          [
+            78.0333289,
+            30.3193922
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1635,
+        "thermal_cost": 520.813231,
+        "length_m": 70.65913629878386,
+        "route_type": "cool",
+        "color": "#e95538",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0333289,
+            30.3193922
+          ],
+          [
+            78.0324454,
+            30.319399800000003
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1635,
+        "thermal_cost": 625.102519,
+        "length_m": 84.80814506000549,
+        "route_type": "cool",
+        "color": "#e95538",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0324454,
+            30.319399800000003
+          ],
+          [
+            78.0323348,
+            30.319338699999985
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1697,
+        "thermal_cost": 92.306009,
+        "length_m": 12.603972479761438,
+        "route_type": "cool",
+        "color": "#eb5a3a",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0323348,
+            30.319338699999985
+          ],
+          [
+            78.0307211,
+            30.318447000000003
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1697,
+        "thermal_cost": 1346.886744,
+        "length_m": 183.91135754903283,
+        "route_type": "cool",
+        "color": "#eb5a3a",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0307211,
+            30.318447000000003
+          ],
+          [
+            78.0307057,
+            30.3184385
+          ],
+          [
+            78.0297151,
+            30.318000799999993
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1635,
+        "thermal_cost": 800.260953,
+        "length_m": 108.57202616400728,
+        "route_type": "cool",
+        "color": "#e95538",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0297151,
+            30.318000799999993
+          ],
+          [
+            78.0294614,
+            30.3178905
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1595,
+        "thermal_cost": 201.804541,
+        "length_m": 27.266285505955643,
+        "route_type": "cool",
+        "color": "#e75337",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0294614,
+            30.3178905
+          ],
+          [
+            78.0294032,
+            30.317863000000003
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1635,
+        "thermal_cost": 46.941784,
+        "length_m": 6.368628420722236,
+        "route_type": "cool",
+        "color": "#e95538",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0294032,
+            30.317863000000003
+          ],
+          [
+            78.0293324,
+            30.3178317
+          ],
+          [
+            78.029003,
+            30.317680600000003
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1635,
+        "thermal_cost": 320.191251,
+        "length_m": 43.440596101141786,
+        "route_type": "cool",
+        "color": "#e95538",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.029003,
+            30.317680600000003
+          ],
+          [
+            78.0289731,
+            30.317580599999996
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1697,
+        "thermal_cost": 84.103295,
+        "length_m": 11.483928573277204,
+        "route_type": "cool",
+        "color": "#eb5a3a",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0289731,
+            30.317580599999996
+          ],
+          [
+            78.0289326,
+            30.317494200000002
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1697,
+        "thermal_cost": 75.90131,
+        "length_m": 10.363984271289864,
+        "route_type": "cool",
+        "color": "#eb5a3a",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0289326,
+            30.317494200000002
+          ],
+          [
+            78.0290839,
+            30.317402400000002
+          ],
+          [
+            78.0291943,
+            30.317305300000008
+          ],
+          [
+            78.0295431,
+            30.317017600000003
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1697,
+        "thermal_cost": 579.934959,
+        "length_m": 79.18752342142619,
+        "route_type": "cool",
+        "color": "#eb5a3a",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0295431,
+            30.317017600000003
+          ],
+          [
+            78.0298135,
+            30.316806399999987
+          ],
+          [
+            78.0300371,
+            30.3167072
+          ],
+          [
+            78.0303609,
+            30.3165823
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1697,
+        "thermal_cost": 682.391897,
+        "length_m": 93.17755979702645,
+        "route_type": "cool",
+        "color": "#eb5a3a",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0303609,
+            30.3165823
+          ],
+          [
+            78.030467,
+            30.3165548
+          ],
+          [
+            78.03069970000001,
+            30.316498999999997
+          ],
+          [
+            78.0309932,
+            30.31646329999999
+          ],
+          [
+            78.0318187,
+            30.316454600000007
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1516,
+        "thermal_cost": 1055.880921,
+        "length_m": 141.51216700558578,
+        "route_type": "cool",
+        "color": "#e54e35",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            78.0318187,
+            30.316454600000007
+          ],
+          [
+            78.0319789,
+            30.316451000000008
+          ],
+          [
+            78.0321559,
+            30.3164405
+          ]
+        ]
+      },
+      "properties": {
+        "shade_score": 0.1325,
+        "thermal_cost": 246.56064,
+        "length_m": 32.41284725995163,
+        "route_type": "cool",
+        "color": "#e0422f",
+        "opacity": 0.85,
+        "weight": 5
+      }
+    }
+  ]
+}

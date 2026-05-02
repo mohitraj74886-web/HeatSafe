@@ -1,0 +1,64 @@
+{
+  "endpoint": "POST /ask",
+  "request": {
+    "question": "What are the signs of heat exhaustion?",
+    "language": "en"
+  },
+  "response": {
+    "answer": "Signs of heat exhaustion include increased core temperatures and heart rates, headache or nausea, and other symptoms. According to the context, workers should be trained to recognize these signs and symptoms, as well as administer first aid (see Table 4-3 in NIOSH 2016-106 Heat Standard, Page 110). \n\nWorkers should drink enough water and monitor the color and amount of urine output to minimize the risk of heat-related illnesses (NIOSH 2016-106 Heat Standard, Page 110). \nAccording to NIOSH 2016-106 Heat Standard, Page 62, and OSHA Heat Safety Manual, Page 2 and 3.",
+    "sources": [
+      {
+        "source_tag": "NIOSH 2016-106 Heat Standard",
+        "filename": "niosh(heat & hot).pdf",
+        "page": 110,
+        "chunk_id": "e109ea9d_13ed05500337",
+        "priority": 5,
+        "preview": "Occupational Exposure to Heat and Hot Environments 79\n6 . Control of Heat Stress Employers should provide a heat stress ..."
+      },
+      {
+        "source_tag": "NIOSH 2016-106 Heat Standard",
+        "filename": "niosh(heat & hot).pdf",
+        "page": 62,
+        "chunk_id": "e109ea9d_1fe734ac6a4d",
+        "priority": 5,
+        "preview": "4.1.5 Acclimatization to Heat When workers are exposed to hot work envi - ronments, they readily show signs of distress ..."
+      },
+      {
+        "source_tag": "OSHA Heat Safety Manual",
+        "filename": "heat_safety(osha).pdf",
+        "page": 2,
+        "chunk_id": "43e2a5c0_89e9c626d3f9",
+        "priority": 3,
+        "preview": ". It should also establish an effective training program that includes how to recognize heat-related illness symptoms an..."
+      },
+      {
+        "source_tag": "niosh(controlling_illness_outdoor_workers).pdf",
+        "filename": "niosh(controlling_illness_outdoor_workers).pdf",
+        "page": 1,
+        "chunk_id": "defa7e79_86fe8bd041a9",
+        "priority": 1,
+        "preview": ". If the symptoms  go untreated, heat-related illnesses can develop into  heat stroke and lead to death.  Heat stroke oc..."
+      },
+      {
+        "source_tag": "OSHA Heat Safety Manual",
+        "filename": "heat_safety(osha).pdf",
+        "page": 3,
+        "chunk_id": "43e2a5c0_a85d6c3f3402",
+        "priority": 3,
+        "preview": "Also, acclimatized workers who are not exposed to heat stress for a week or more may need some time to re-acclimatize   ..."
+      }
+    ],
+    "retrieval_ms": 629.1,
+    "generation_ms": 957.2,
+    "total_ms": 1588.0,
+    "chunks_retrieved": 5,
+    "model": "llama-3.3-70b-versatile"
+  },
+  "notes": [
+    "answer: The LLM-generated answer grounded in NIOSH/OSHA/WHO docs",
+    "sources: List of source docs cited \u2014 show these in UI as \"Powered by NIOSH 2016-106\"",
+    "retrieval_ms: Time to find relevant chunks (should be < 200ms)",
+    "generation_ms: Time for LLM to generate (Groq is very fast ~500-1500ms)",
+    "total_ms: End-to-end latency"
+  ]
+}

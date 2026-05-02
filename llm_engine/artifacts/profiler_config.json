@@ -1,0 +1,240 @@
+{
+  "model": "llama-3.3-70b-versatile",
+  "temperature": 0.0,
+  "max_retries": 3,
+  "system_prompt_hash": 1855289436068675132,
+  "pydantic_schema": {
+    "description": "Structured output from LLM after analyzing occupation input.\nAll fields are constrained to prevent hallucination.",
+    "properties": {
+      "raw_input_normalized": {
+        "description": "Worker's input cleaned and normalized to English. E.g. 'sadak mazdoor' \u2192 'road construction laborer'",
+        "title": "Raw Input Normalized",
+        "type": "string"
+      },
+      "occupation_english": {
+        "description": "Clean English occupation name. Max 60 characters.",
+        "maxLength": 60,
+        "title": "Occupation English",
+        "type": "string"
+      },
+      "occupation_category": {
+        "description": "Best matching category from the provided list",
+        "enum": [
+          "construction",
+          "agriculture",
+          "transport",
+          "street_vending",
+          "manufacturing",
+          "domestic_work",
+          "emergency_services",
+          "utilities",
+          "waste_management",
+          "mining",
+          "informal_labor",
+          "other"
+        ],
+        "title": "Occupation Category",
+        "type": "string"
+      },
+      "work_intensity": {
+        "description": "NIOSH work intensity category. SELECT from: light, moderate, heavy, very_heavy.",
+        "enum": [
+          "light",
+          "moderate",
+          "heavy",
+          "very_heavy"
+        ],
+        "title": "Work Intensity",
+        "type": "string"
+      },
+      "metabolic_rate_watts_m2": {
+        "description": "Metabolic rate in W/m\u00b2 body surface area. MUST use exact NIOSH value from the table provided: light=117, moderate=234, heavy=352, very_heavy=468",
+        "maximum": 550,
+        "minimum": 100,
+        "title": "Metabolic Rate Watts M2",
+        "type": "number"
+      },
+      "metabolic_rate_total_watts": {
+        "description": "Total metabolic rate in Watts. MUST use exact NIOSH value: light=180, moderate=300, heavy=415, very_heavy=520",
+        "maximum": 600,
+        "minimum": 150,
+        "title": "Metabolic Rate Total Watts",
+        "type": "number"
+      },
+      "clothing_type": {
+        "description": "Most likely clothing for this occupation in India. SELECT from the provided list.",
+        "enum": [
+          "summer_work_clothes",
+          "cotton_coverall",
+          "double_layer_coverall",
+          "synthetic_coverall",
+          "reflective_suit",
+          "saree_kurta",
+          "construction_helmet_vest",
+          "full_ppe_no_scba"
+        ],
+        "title": "Clothing Type",
+        "type": "string"
+      },
+      "clothing_adjustment_factor": {
+        "description": "CAF in \u00b0C. MUST use exact NIOSH value from table provided. summer_work_clothes=0.0, saree_kurta=2.0, construction_helmet_vest=1.0, cotton_coverall=3.5, double_layer_coverall=5.0, synthetic_coverall=0.5, reflective_suit=11.0, full_ppe_no_scba=3.5",
+        "maximum": 12.0,
+        "minimum": 0.0,
+        "title": "Clothing Adjustment Factor",
+        "type": "number"
+      },
+      "typical_outdoor_fraction": {
+        "description": "Fraction of shift spent outdoors (0.0=always indoor, 1.0=always outdoor)",
+        "maximum": 1.0,
+        "minimum": 0.0,
+        "title": "Typical Outdoor Fraction",
+        "type": "number"
+      },
+      "typical_direct_sun_fraction": {
+        "description": "Fraction of outdoor time in direct sun (0.0=always shaded, 1.0=always direct sun)",
+        "maximum": 1.0,
+        "minimum": 0.0,
+        "title": "Typical Direct Sun Fraction",
+        "type": "number"
+      },
+      "profiling_confidence": {
+        "description": "Your confidence in this profile (0.0\u20131.0). Be honest. If occupation is ambiguous, score lower.",
+        "maximum": 1.0,
+        "minimum": 0.0,
+        "title": "Profiling Confidence",
+        "type": "number"
+      },
+      "ambiguity_flags": {
+        "default": [],
+        "description": "List any aspects you are unsure about. E.g. ['clothing unclear for this occupation', 'work intensity varies by task']. Empty list if confident.",
+        "items": {
+          "type": "string"
+        },
+        "title": "Ambiguity Flags",
+        "type": "array"
+      },
+      "conservative_fallback_applied": {
+        "description": "Set True if you defaulted to heavier work intensity due to ambiguity (safety-first). Set False if occupation was clear.",
+        "title": "Conservative Fallback Applied",
+        "type": "boolean"
+      }
+    },
+    "required": [
+      "raw_input_normalized",
+      "occupation_english",
+      "occupation_category",
+      "work_intensity",
+      "metabolic_rate_watts_m2",
+      "metabolic_rate_total_watts",
+      "clothing_type",
+      "clothing_adjustment_factor",
+      "typical_outdoor_fraction",
+      "typical_direct_sun_fraction",
+      "profiling_confidence",
+      "conservative_fallback_applied"
+    ],
+    "title": "WorkerProfile",
+    "type": "object"
+  },
+  "heat_result_schema": {
+    "properties": {
+      "wet_bulb_temp_c": {
+        "title": "Wet Bulb Temp C",
+        "type": "number"
+      },
+      "wbgt_outdoor_c": {
+        "title": "Wbgt Outdoor C",
+        "type": "number"
+      },
+      "wbgt_adjusted_c": {
+        "title": "Wbgt Adjusted C",
+        "type": "number"
+      },
+      "niosh_rel_c": {
+        "title": "Niosh Rel C",
+        "type": "number"
+      },
+      "niosh_ral_c": {
+        "title": "Niosh Ral C",
+        "type": "number"
+      },
+      "pct_of_rel": {
+        "title": "Pct Of Rel",
+        "type": "number"
+      },
+      "heat_strain_index": {
+        "title": "Heat Strain Index",
+        "type": "number"
+      },
+      "risk_level": {
+        "enum": [
+          "safe",
+          "caution",
+          "warning",
+          "danger",
+          "extreme_danger"
+        ],
+        "title": "Risk Level",
+        "type": "string"
+      },
+      "max_continuous_work_min": {
+        "title": "Max Continuous Work Min",
+        "type": "integer"
+      },
+      "required_rest_min_per_hr": {
+        "title": "Required Rest Min Per Hr",
+        "type": "integer"
+      },
+      "water_intake_ml_per_hr": {
+        "title": "Water Intake Ml Per Hr",
+        "type": "integer"
+      },
+      "safe_to_work": {
+        "title": "Safe To Work",
+        "type": "boolean"
+      },
+      "immediate_action_required": {
+        "title": "Immediate Action Required",
+        "type": "boolean"
+      },
+      "alert_en": {
+        "title": "Alert En",
+        "type": "string"
+      },
+      "alert_hi": {
+        "title": "Alert Hi",
+        "type": "string"
+      },
+      "calculation_trace": {
+        "additionalProperties": true,
+        "title": "Calculation Trace",
+        "type": "object"
+      }
+    },
+    "required": [
+      "wet_bulb_temp_c",
+      "wbgt_outdoor_c",
+      "wbgt_adjusted_c",
+      "niosh_rel_c",
+      "niosh_ral_c",
+      "pct_of_rel",
+      "heat_strain_index",
+      "risk_level",
+      "max_continuous_work_min",
+      "required_rest_min_per_hr",
+      "water_intake_ml_per_hr",
+      "safe_to_work",
+      "immediate_action_required",
+      "alert_en",
+      "alert_hi",
+      "calculation_trace"
+    ],
+    "title": "HeatStrainResult",
+    "type": "object"
+  },
+  "test_stats": {
+    "total_calls": 13,
+    "failures": 0,
+    "success_rate": "100.0%"
+  }
+}

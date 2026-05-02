@@ -1,0 +1,60 @@
+# ── LLM + Structured Outputs ──────────────────────────────────
+groq
+instructor         # forces structured JSON from any LLM
+ 
+# ── Data Validation (anti-hallucination backbone) ─────────────
+pydantic
+ 
+# ── ML / Shade Model ──────────────────────────────────────────
+xgboost
+scikit-learn
+optuna
+shap
+joblib
+ 
+# ── Geospatial ────────────────────────────────────────────────
+osmnx
+geopandas
+shapely
+pvlib
+ 
+# ── Data ──────────────────────────────────────────────────────
+pandas
+numpy
+ 
+# ── Weather API ───────────────────────────────────────────────
+requests
+ 
+# ── RAG Pipeline ──────────────────────────────────────────────
+chromadb
+llama-index
+sentence-transformers
+pypdf
+langchain
+langchain-community
+langchain-groq
+langchain-chroma
+tiktoken
+rank-bm25
+langsmith
+rich 
+pandas 
+numpy 
+matplotlib 
+seaborn 
+tqdm
+ 
+# ── FastAPI ───────────────────────────────────────────────────
+fastapi
+uvicorn[standard]
+ 
+# ── Notebook ──────────────────────────────────────────────────
+ipykernel
+matplotlib
+seaborn
+jupyter
+ 
+# ── Utils ─────────────────────────────────────────────────────
+python-dotenv
+tenacity
+rich
