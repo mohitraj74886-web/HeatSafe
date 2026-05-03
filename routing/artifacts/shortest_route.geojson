@@ -46,7 +46,7 @@
       },
       "properties": {
         "shade_score": 0.1731,
-        "thermal_cost": 994.389558,
+        "thermal_cost": 960.925258,
         "length_m": 136.26123181394118,
         "route_type": "short",
         "color": "#ec5c3b",
@@ -71,7 +71,7 @@
       },
       "properties": {
         "shade_score": 0.318,
-        "thermal_cost": 301.384759,
+        "thermal_cost": 291.529159,
         "length_m": 48.65665305822951,
         "route_type": "short",
         "color": "#fdb768",
@@ -100,7 +100,7 @@
       },
       "properties": {
         "shade_score": 0.4183,
-        "thermal_cost": 85.683634,
+        "thermal_cost": 82.957574,
         "length_m": 15.779014566829778,
         "route_type": "short",
         "color": "#fee695",
@@ -137,7 +137,7 @@
       },
       "properties": {
         "shade_score": 0.416,
-        "thermal_cost": 136.21367,
+        "thermal_cost": 131.876831,
         "length_m": 25.00368409400348,
         "route_type": "short",
         "color": "#fee593",
@@ -170,7 +170,7 @@
       },
       "properties": {
         "shade_score": 0.3551,
-        "thermal_cost": 234.321985,
+        "thermal_cost": 226.729921,
         "length_m": 39.63793796239739,
         "route_type": "short",
         "color": "#fec877",
@@ -195,7 +195,7 @@
       },
       "properties": {
         "shade_score": 0.1697,
-        "thermal_cost": 266.838469,
+        "thermal_cost": 257.853483,
         "length_m": 36.43559886972654,
         "route_type": "short",
         "color": "#eb5a3a",
@@ -224,7 +224,7 @@
       },
       "properties": {
         "shade_score": 0.1697,
-        "thermal_cost": 280.103745,
+        "thermal_cost": 270.672091,
         "length_m": 38.24691290021222,
         "route_type": "short",
         "color": "#eb5a3a",
@@ -249,7 +249,7 @@
       },
       "properties": {
         "shade_score": 0.1697,
-        "thermal_cost": 19.826659,
+        "thermal_cost": 19.159056,
         "length_m": 2.707241611445533,
         "route_type": "short",
         "color": "#eb5a3a",
@@ -278,7 +278,7 @@
       },
       "properties": {
         "shade_score": 0.1697,
-        "thermal_cost": 1139.451604,
+        "thermal_cost": 1101.083985,
         "length_m": 155.58701736405143,
         "route_type": "short",
         "color": "#eb5a3a",
@@ -303,7 +303,7 @@
       },
       "properties": {
         "shade_score": 0.1697,
-        "thermal_cost": 356.122579,
+        "thermal_cost": 344.131219,
         "length_m": 48.626944529914674,
         "route_type": "short",
         "color": "#eb5a3a",
@@ -328,7 +328,7 @@
       },
       "properties": {
         "shade_score": 0.0,
-        "thermal_cost": 1292.0621701473165,
+        "thermal_cost": 537.43326,
         "length_m": 64.60310850736582,
         "route_type": "short",
         "color": "#a50026",
@@ -357,7 +357,7 @@
       },
       "properties": {
         "shade_score": 0.0,
-        "thermal_cost": 2029.674418964124,
+        "thermal_cost": 844.243075,
         "length_m": 101.4837209482062,
         "route_type": "short",
         "color": "#a50026",
@@ -382,7 +382,7 @@
       },
       "properties": {
         "shade_score": 0.0,
-        "thermal_cost": 2122.421766046479,
+        "thermal_cost": 882.821334,
         "length_m": 106.12108830232397,
         "route_type": "short",
         "color": "#a50026",
@@ -419,7 +419,7 @@
       },
       "properties": {
         "shade_score": 0.0,
-        "thermal_cost": 2911.744907489303,
+        "thermal_cost": 1211.140294,
         "length_m": 145.58724537446514,
         "route_type": "short",
         "color": "#a50026",
@@ -444,7 +444,7 @@
       },
       "properties": {
         "shade_score": 0.0,
-        "thermal_cost": 569.6766731085596,
+        "thermal_cost": 236.957012,
         "length_m": 28.48383365542798,
         "route_type": "short",
         "color": "#a50026",
@@ -477,7 +477,7 @@
       },
       "properties": {
         "shade_score": 0.0,
-        "thermal_cost": 3361.8094407393382,
+        "thermal_cost": 1398.344637,
         "length_m": 168.0904720369669,
         "route_type": "short",
         "color": "#a50026",
@@ -502,7 +502,7 @@
       },
       "properties": {
         "shade_score": 0.1697,
-        "thermal_cost": 224.115272,
+        "thermal_cost": 216.568862,
         "length_m": 30.601937526168904,
         "route_type": "short",
         "color": "#eb5a3a",
@@ -527,7 +527,7 @@
       },
       "properties": {
         "shade_score": 0.1697,
-        "thermal_cost": 236.430562,
+        "thermal_cost": 228.469471,
         "length_m": 32.28353516408023,
         "route_type": "short",
         "color": "#eb5a3a",
@@ -560,7 +560,7 @@
       },
       "properties": {
         "shade_score": 0.1697,
-        "thermal_cost": 956.832643,
+        "thermal_cost": 924.614171,
         "length_m": 130.65121551702717,
         "route_type": "short",
         "color": "#eb5a3a",
@@ -585,7 +585,7 @@
       },
       "properties": {
         "shade_score": 0.1697,
-        "thermal_cost": 82.596694,
+        "thermal_cost": 79.815498,
         "length_m": 11.27820892097297,
         "route_type": "short",
         "color": "#eb5a3a",
@@ -614,7 +614,7 @@
       },
       "properties": {
         "shade_score": 0.1697,
-        "thermal_cost": 170.211813,
+        "thermal_cost": 164.48044,
         "length_m": 23.241661390315155,
         "route_type": "short",
         "color": "#eb5a3a",
@@ -639,7 +639,7 @@
       },
       "properties": {
         "shade_score": 0.1731,
-        "thermal_cost": 406.89382,
+        "thermal_cost": 393.200578,
         "length_m": 55.75667271755505,
         "route_type": "short",
         "color": "#ec5c3b",
@@ -668,7 +668,7 @@
       },
       "properties": {
         "shade_score": 0.1629,
-        "thermal_cost": 361.316104,
+        "thermal_cost": 349.136358,
         "length_m": 48.98966530965485,
         "route_type": "short",
         "color": "#e95538",
@@ -693,7 +693,7 @@
       },
       "properties": {
         "shade_score": 0.1697,
-        "thermal_cost": 54.156903,
+        "thermal_cost": 52.333331,
         "length_m": 7.3948826912239385,
         "route_type": "short",
         "color": "#eb5a3a",
@@ -726,7 +726,7 @@
       },
       "properties": {
         "shade_score": 0.155,
-        "thermal_cost": 1302.544818,
+        "thermal_cost": 1258.581093,
         "length_m": 175.17871220917237,
         "route_type": "short",
         "color": "#e65036",

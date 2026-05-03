@@ -24,6 +24,7 @@ from contextlib import asynccontextmanager
 
 import numpy as np
 import joblib
+import requests   # for Nominatim geocoding
 import osmnx as ox
 import networkx as nx
 import geopandas as gpd
@@ -172,12 +173,20 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 
 # ─── Schemas ──────────────────────────────────────────────────────────
 class RouteRequest(BaseModel):
-    origin_lat:      float = Field(..., example=30.3248)
-    origin_lon:      float = Field(..., example=78.0435)
-    dest_lat:        float = Field(..., example=30.3159)
-    dest_lon:        float = Field(..., example=78.0324)
+    # ── Option A: Place names (recommended — no coordinates needed) ──
+    origin_name:     Optional[str] = Field(None, example="clock tower",
+                       description="Origin place name (geocoded automatically via OSM Nominatim)")
+    dest_name:       Optional[str] = Field(None, example="parade ground",
+                       description="Destination place name (geocoded automatically)")
+
+    # ── Option B: Raw coordinates (fallback) ─────────────────────────
+    origin_lat:      Optional[float] = Field(None, example=30.3248)
+    origin_lon:      Optional[float] = Field(None, example=78.0435)
+    dest_lat:        Optional[float] = Field(None, example=30.3159)
+    dest_lon:        Optional[float] = Field(None, example=78.0324)
+
     hour:            Optional[int] = Field(None, ge=0, le=23,
-                       description="Hour 0-23 for solar simulation. Defaults to current hour.")
+                       description="Hour 0-23. Defaults to current IST hour (real-time solar angle).")
     include_geojson: bool = Field(True, description="Include GeoJSON in response (set False for summary only)")
 
 
@@ -198,6 +207,24 @@ def health():
     }
 
 
+def _geocode(name: str) -> tuple:
+    """OSM Nominatim geocoder — free, no API key. Returns (lat, lon)."""
+    import requests as _req
+    url = "https://nominatim.openstreetmap.org/search"
+    params = {"q": f"{name}, Dehradun, Uttarakhand, India",
+              "format": "json", "limit": 1, "countrycodes": "in",
+              "viewbox": "77.85,30.15,78.25,30.55", "bounded": 1}
+    try:
+        r = _req.get(url, params=params,
+                     headers={"User-Agent": "HeatSafeNavigator/1.0"}, timeout=8)
+        d = r.json()
+        if d:
+            return float(d[0]["lat"]), float(d[0]["lon"])
+    except Exception as e:
+        logger.warning(f"Nominatim error for '{name}': {e}")
+    raise HTTPException(400, f"Cannot geocode '{name}'. Try a more specific name.")
+
+
 @app.post("/route")
 def find_route(req: RouteRequest):
     G   = APP_STATE.get("G")
@@ -206,12 +233,27 @@ def find_route(req: RouteRequest):
         raise HTTPException(503, "Graph not loaded yet")
 
     try:
-        solar = get_solar(LAT, LON, req.hour)
+        # ── Solar: always real-time IST hour, not hardcoded ───────────
+        solar = get_solar(LAT, LON, req.hour)   # req.hour=None → uses datetime.now().hour
 
-        # Project coordinates properly before snapping to the metric graph!
-        orig_gdf = gpd.GeoDataFrame(geometry=[Point(req.origin_lon, req.origin_lat)], crs="EPSG:4326").to_crs(CRS)
-        dest_gdf = gpd.GeoDataFrame(geometry=[Point(req.dest_lon, req.dest_lat)], crs="EPSG:4326").to_crs(CRS)
+        # ── Resolve origin: place name OR raw coordinates ─────────────
+        if req.origin_name:
+            o_lat, o_lon = _geocode(req.origin_name)
+        elif req.origin_lat is not None and req.origin_lon is not None:
+            o_lat, o_lon = req.origin_lat, req.origin_lon
+        else:
+            raise HTTPException(400, "Provide origin_name or origin_lat+origin_lon")
 
+        # ── Resolve destination ────────────────────────────────────────
+        if req.dest_name:
+            d_lat, d_lon = _geocode(req.dest_name)
+        elif req.dest_lat is not None and req.dest_lon is not None:
+            d_lat, d_lon = req.dest_lat, req.dest_lon
+        else:
+            raise HTTPException(400, "Provide dest_name or dest_lat+dest_lon")
+
+        orig_gdf = gpd.GeoDataFrame(geometry=[Point(o_lon, o_lat)], crs="EPSG:4326").to_crs(CRS)
+        dest_gdf = gpd.GeoDataFrame(geometry=[Point(d_lon, d_lat)], crs="EPSG:4326").to_crs(CRS)
         orig = ox.distance.nearest_nodes(G, X=orig_gdf.geometry.iloc[0].x, Y=orig_gdf.geometry.iloc[0].y)
         dest = ox.distance.nearest_nodes(G, X=dest_gdf.geometry.iloc[0].x, Y=dest_gdf.geometry.iloc[0].y)
 
