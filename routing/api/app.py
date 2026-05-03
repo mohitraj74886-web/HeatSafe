@@ -173,22 +173,14 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 
 # ─── Schemas ──────────────────────────────────────────────────────────
 class RouteRequest(BaseModel):
-    # ── Option A: Place names (recommended — no coordinates needed) ──
-    origin_name:     Optional[str] = Field(None, example="clock tower",
-                       description="Origin place name (geocoded automatically via OSM Nominatim)")
-    dest_name:       Optional[str] = Field(None, example="parade ground",
-                       description="Destination place name (geocoded automatically)")
-
-    # ── Option B: Raw coordinates (fallback) ─────────────────────────
+    origin_name:     Optional[str] = Field(None, example="clock tower")
+    dest_name:       Optional[str] = Field(None, example="parade ground")
     origin_lat:      Optional[float] = Field(None, example=30.3248)
     origin_lon:      Optional[float] = Field(None, example=78.0435)
     dest_lat:        Optional[float] = Field(None, example=30.3159)
     dest_lon:        Optional[float] = Field(None, example=78.0324)
-
-    hour:            Optional[int] = Field(None, ge=0, le=23,
-                       description="Hour 0-23. Defaults to current IST hour (real-time solar angle).")
-    include_geojson: bool = Field(True, description="Include GeoJSON in response (set False for summary only)")
-
+    hour:            Optional[int] = Field(None, ge=0, le=23)
+    include_geojson: bool = Field(True)
 
 class BatchRouteRequest(BaseModel):
     routes: List[RouteRequest]
@@ -206,58 +198,56 @@ def health():
         "solar_elevation": APP_STATE.get("solar", {}).get("elevation_deg"),
     }
 
-
 def _geocode(name: str) -> tuple:
-    """OSM Nominatim geocoder — free, no API key. Returns (lat, lon)."""
     import requests as _req
     url = "https://nominatim.openstreetmap.org/search"
     params = {"q": f"{name}, Dehradun, Uttarakhand, India",
               "format": "json", "limit": 1, "countrycodes": "in",
               "viewbox": "77.85,30.15,78.25,30.55", "bounded": 1}
     try:
-        r = _req.get(url, params=params,
-                     headers={"User-Agent": "HeatSafeNavigator/1.0"}, timeout=8)
+        r = _req.get(url, params=params, headers={"User-Agent": "HeatSafeNavigator/1.0"}, timeout=8)
         d = r.json()
-        if d:
-            return float(d[0]["lat"]), float(d[0]["lon"])
+        if d: return float(d[0]["lat"]), float(d[0]["lon"])
     except Exception as e:
-        logger.warning(f"Nominatim error for '{name}': {e}")
-    raise HTTPException(400, f"Cannot geocode '{name}'. Try a more specific name.")
+        logger.warning(f"Nominatim error: {e}")
+    raise HTTPException(400, f"Cannot geocode '{name}'")
 
 
 @app.post("/route")
 def find_route(req: RouteRequest):
     G   = APP_STATE.get("G")
-    art = APP_STATE.get("artifacts")
     if G is None:
         raise HTTPException(503, "Graph not loaded yet")
 
     try:
-        # ── Solar: always real-time IST hour, not hardcoded ───────────
-        solar = get_solar(LAT, LON, req.hour)   # req.hour=None → uses datetime.now().hour
+        solar = get_solar(LAT, LON, req.hour)
 
-        # ── Resolve origin: place name OR raw coordinates ─────────────
-        if req.origin_name:
-            o_lat, o_lon = _geocode(req.origin_name)
-        elif req.origin_lat is not None and req.origin_lon is not None:
-            o_lat, o_lon = req.origin_lat, req.origin_lon
-        else:
-            raise HTTPException(400, "Provide origin_name or origin_lat+origin_lon")
+        if req.origin_name: o_lat, o_lon = _geocode(req.origin_name)
+        elif req.origin_lat is not None and req.origin_lon is not None: o_lat, o_lon = req.origin_lat, req.origin_lon
+        else: raise HTTPException(400, "Provide origin")
 
-        # ── Resolve destination ────────────────────────────────────────
-        if req.dest_name:
-            d_lat, d_lon = _geocode(req.dest_name)
-        elif req.dest_lat is not None and req.dest_lon is not None:
-            d_lat, d_lon = req.dest_lat, req.dest_lon
-        else:
-            raise HTTPException(400, "Provide dest_name or dest_lat+dest_lon")
+        if req.dest_name: d_lat, d_lon = _geocode(req.dest_name)
+        elif req.dest_lat is not None and req.dest_lon is not None: d_lat, d_lon = req.dest_lat, req.dest_lon
+        else: raise HTTPException(400, "Provide dest")
 
         orig_gdf = gpd.GeoDataFrame(geometry=[Point(o_lon, o_lat)], crs="EPSG:4326").to_crs(CRS)
         dest_gdf = gpd.GeoDataFrame(geometry=[Point(d_lon, d_lat)], crs="EPSG:4326").to_crs(CRS)
         orig = ox.distance.nearest_nodes(G, X=orig_gdf.geometry.iloc[0].x, Y=orig_gdf.geometry.iloc[0].y)
         dest = ox.distance.nearest_nodes(G, X=dest_gdf.geometry.iloc[0].x, Y=dest_gdf.geometry.iloc[0].y)
 
-        cool_nodes  = nx.shortest_path(G, orig, dest, weight="thermal_cost", method="dijkstra")
+        # ── 1. Create a dynamic weight function for Dijkstra ─────────────
+        def dynamic_thermal_weight(u, v, edge_data):
+            min_cost = float('inf')
+            for k, d in edge_data.items():
+                shade = float(d.get("shade_score", 0.15))
+                length = float(d.get("length", 50))
+                cost = thermal_cost(length, shade, solar["heat_penalty"])
+                if cost < min_cost:
+                    min_cost = cost
+            return min_cost
+
+        # ── 2. Pass the function instead of the string! ──────────────────
+        cool_nodes  = nx.shortest_path(G, orig, dest, weight=dynamic_thermal_weight, method="dijkstra")
         short_nodes = nx.shortest_path(G, orig, dest, weight="length",       method="dijkstra")
 
         def summarize_nodes(nodes):
@@ -266,7 +256,13 @@ def find_route(req: RouteRequest):
             feats = []
             for i in range(len(nodes)-1):
                 u, v = nodes[i], nodes[i+1]
-                bk = min(G[u][v], key=lambda k: G[u][v][k].get("thermal_cost", 999))
+                
+                # ── 3. Update summary to also use dynamic cost ───────────
+                bk = min(G[u][v], key=lambda k: thermal_cost(
+                    float(G[u][v][k].get("length", 50)),
+                    float(G[u][v][k].get("shade_score", 0.15)),
+                    solar["heat_penalty"]
+                ))
                 d  = G[u][v][bk]
                 seg_len = float(d.get("length", 0))
                 shade = float(d.get("shade_score", 0.15))
@@ -322,27 +318,3 @@ def find_route(req: RouteRequest):
     except Exception as e:
         logger.error(f"Route error: {e}")
         raise HTTPException(500, str(e))
-
-
-@app.post("/route/batch")
-def batch_routes(req: BatchRouteRequest):
-    if len(req.routes) > 20:
-        raise HTTPException(400, "Max 20 routes per batch")
-    return [find_route(r) for r in req.routes]
-
-
-@app.get("/docs-summary")
-def docs_summary():
-    return {
-        "endpoints": [
-            {"method": "GET",  "path": "/health",        "description": "API status + graph stats"},
-            {"method": "POST", "path": "/route",         "description": "Find thermal route between two points"},
-            {"method": "POST", "path": "/route/batch",   "description": "Find up to 20 routes in parallel"},
-            {"method": "GET",  "path": "/docs",          "description": "Swagger UI"},
-        ],
-        "example_request": {
-            "origin_lat": 30.3248, "origin_lon": 78.0435,
-            "dest_lat": 30.3159,   "dest_lon": 78.0324,
-            "hour": 13, "include_geojson": True
-        }
-    }
