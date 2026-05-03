@@ -4,16 +4,6 @@ FastAPI endpoint wrapping the ThermalRouteOptimizer.
 
 Run:
     uvicorn app:app --reload --port 8001
-
-NOTE: The graph G is loaded ONCE on startup and cached.
-      Do NOT re-download OSM on every request — that would be too slow.
-      The graph is pre-scored with shade model on startup.
-
-Endpoints:
-    GET  /health              → API status
-    POST /route               → Find thermal route
-    POST /route/batch         → Multiple routes
-    GET  /docs                → Swagger UI
 """
 
 import os, json, math, time, logging
@@ -24,7 +14,7 @@ from contextlib import asynccontextmanager
 
 import numpy as np
 import joblib
-import requests   # for Nominatim geocoding
+import requests
 import osmnx as ox
 import networkx as nx
 import geopandas as gpd
@@ -40,9 +30,7 @@ from pydantic import BaseModel, Field
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("heatsafe.routing.api")
 
-# ─── Config ───────────────────────────────────────────────────────────
 BASE_DIR     = Path(__file__).parent.parent
-ARTIFACT_DIR = BASE_DIR / "artifacts"
 SHADE_DIR    = BASE_DIR.parent / "shade_model" / "artifacts"
 
 CITY     = os.getenv("HEATSAFE_CITY",  "Dehradun, Uttarakhand, India")
@@ -55,9 +43,7 @@ W_DIST = 1.0
 W_HEAT = 20.0
 W_TIME = 5.0
 
-# ─── App state (loaded once on startup) ───────────────────────────────
 APP_STATE = {}
-
 
 def load_shade_model():
     model    = joblib.load(SHADE_DIR / "shade_model.joblib")
@@ -71,7 +57,6 @@ def load_shade_model():
             "highway_classes": meta["highway_classes"],
             "surface_classes": meta["surface_classes"]}
 
-
 def get_solar(lat, lon, hour=None):
     site = pvloc.Location(lat, lon, tz=TIMEZONE, altitude=700)
     if hour is None:
@@ -83,9 +68,7 @@ def get_solar(lat, lon, hour=None):
             "heat_penalty": max(0.0, math.sin(math.radians(max(elev, 0)))) ** 0.5,
             "hour": hour}
 
-
 def score_edge(data, geom, art, solar):
-    """Score one edge — same logic as notebook EdgeShadeScorer."""
     def safe_first(v): return v[0] if isinstance(v, list) else v
     hw   = safe_first(data.get("highway", "unclassified"))
     sf   = safe_first(data.get("surface",  "asphalt"))
@@ -125,7 +108,6 @@ def score_edge(data, geom, art, solar):
     row_s = art["scaler"].transform(row)
     return float(min(max(art["model"].predict(row_s)[0], 0.0), 1.0))
 
-
 def thermal_cost(length, shade, solar_pen):
     base_cost = length * W_DIST
     heat_exposure = 1.0 - shade
@@ -134,10 +116,8 @@ def thermal_cost(length, shade, solar_pen):
     total_cost = base_cost + (length * penalty_multiplier)
     return round(total_cost, 6)
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Load heavy resources once on startup."""
     logger.info("⏳ Loading shade model...")
     art = load_shade_model()
     APP_STATE["artifacts"] = art
@@ -146,32 +126,30 @@ async def lifespan(app: FastAPI):
     G_raw = ox.graph_from_place(CITY, network_type="walk", simplify=True)
     G = ox.project_graph(G_raw, to_crs=CRS)
 
-    logger.info("⏳ Pre-scoring all edges...")
-    solar = get_solar(LAT, LON)
+    logger.info("⏳ Pre-scoring all edges for 24 hours (this may take a minute)...")
+    # THE FIX: Calculate sun positions for all 24 hours
+    solar_profiles = {h: get_solar(LAT, LON, h) for h in range(24)}
+
     for u, v, k, data in G.edges(data=True, keys=True):
         geom = data.get("geometry", None)
-        shade = score_edge(data, geom, art, solar)
-        tc    = thermal_cost(float(data.get("length", 50)), shade, solar["heat_penalty"])
-        G[u][v][k]["shade_score"]  = shade
-        G[u][v][k]["thermal_cost"] = tc
+        
+        # THE FIX: Create a dictionary of 24 sticky notes for this street
+        shade_hourly = {}
+        for h in range(24):
+            shade = score_edge(data, geom, art, solar_profiles[h])
+            shade_hourly[h] = round(shade, 4)
+            
+        G[u][v][k]["shade_hourly"] = shade_hourly
+        G[u][v][k]["length"] = float(data.get("length", 50))
 
-    APP_STATE["G"]     = G
-    APP_STATE["solar"] = solar
-    logger.info(f"✅ Ready — {G.number_of_edges():,} edges scored")
+    APP_STATE["G"] = G
+    logger.info(f"✅ Ready — {G.number_of_edges():,} edges scored for 24 hours")
     yield
     APP_STATE.clear()
 
-
-app = FastAPI(
-    title="HeatSafe Navigator — Routing API",
-    description="Thermal route optimization for outdoor worker safety",
-    version="1.0.0",
-    lifespan=lifespan,
-)
+app = FastAPI(title="HeatSafe Navigator — Routing API", lifespan=lifespan)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
-
-# ─── Schemas ──────────────────────────────────────────────────────────
 class RouteRequest(BaseModel):
     origin_name:     Optional[str] = Field(None, example="clock tower")
     dest_name:       Optional[str] = Field(None, example="parade ground")
@@ -185,42 +163,28 @@ class RouteRequest(BaseModel):
 class BatchRouteRequest(BaseModel):
     routes: List[RouteRequest]
 
-
-# ─── Endpoints ────────────────────────────────────────────────────────
 @app.get("/health")
 def health():
     G = APP_STATE.get("G")
-    return {
-        "status": "ok",
-        "city": CITY,
-        "graph_edges": G.number_of_edges() if G else 0,
-        "graph_nodes": G.number_of_nodes() if G else 0,
-        "solar_elevation": APP_STATE.get("solar", {}).get("elevation_deg"),
-    }
+    return {"status": "ok", "city": CITY}
 
 def _geocode(name: str) -> tuple:
     import requests as _req
     url = "https://nominatim.openstreetmap.org/search"
-    params = {"q": f"{name}, Dehradun, Uttarakhand, India",
-              "format": "json", "limit": 1, "countrycodes": "in",
-              "viewbox": "77.85,30.15,78.25,30.55", "bounded": 1}
-    try:
-        r = _req.get(url, params=params, headers={"User-Agent": "HeatSafeNavigator/1.0"}, timeout=8)
-        d = r.json()
-        if d: return float(d[0]["lat"]), float(d[0]["lon"])
-    except Exception as e:
-        logger.warning(f"Nominatim error: {e}")
+    params = {"q": f"{name}, Dehradun, Uttarakhand, India", "format": "json", "limit": 1, "countrycodes": "in", "viewbox": "77.85,30.15,78.25,30.55", "bounded": 1}
+    r = _req.get(url, params=params, headers={"User-Agent": "HeatSafeNavigator/1.0"}, timeout=8)
+    d = r.json()
+    if d: return float(d[0]["lat"]), float(d[0]["lon"])
     raise HTTPException(400, f"Cannot geocode '{name}'")
-
 
 @app.post("/route")
 def find_route(req: RouteRequest):
     G   = APP_STATE.get("G")
-    if G is None:
-        raise HTTPException(503, "Graph not loaded yet")
+    if G is None: raise HTTPException(503, "Graph not loaded yet")
 
     try:
         solar = get_solar(LAT, LON, req.hour)
+        request_hour = solar["hour"] # THE FIX: Store the requested hour
 
         if req.origin_name: o_lat, o_lon = _geocode(req.origin_name)
         elif req.origin_lat is not None and req.origin_lon is not None: o_lat, o_lon = req.origin_lat, req.origin_lon
@@ -235,18 +199,17 @@ def find_route(req: RouteRequest):
         orig = ox.distance.nearest_nodes(G, X=orig_gdf.geometry.iloc[0].x, Y=orig_gdf.geometry.iloc[0].y)
         dest = ox.distance.nearest_nodes(G, X=dest_gdf.geometry.iloc[0].x, Y=dest_gdf.geometry.iloc[0].y)
 
-        # ── 1. Create a dynamic weight function for Dijkstra ─────────────
         def dynamic_thermal_weight(u, v, edge_data):
             min_cost = float('inf')
             for k, d in edge_data.items():
-                shade = float(d.get("shade_score", 0.15))
+                # THE FIX: Get the shade for THIS SPECIFIC HOUR
+                shade = float(d.get("shade_hourly", {}).get(request_hour, 0.15))
                 length = float(d.get("length", 50))
                 cost = thermal_cost(length, shade, solar["heat_penalty"])
                 if cost < min_cost:
                     min_cost = cost
             return min_cost
 
-        # ── 2. Pass the function instead of the string! ──────────────────
         cool_nodes  = nx.shortest_path(G, orig, dest, weight=dynamic_thermal_weight, method="dijkstra")
         short_nodes = nx.shortest_path(G, orig, dest, weight="length",       method="dijkstra")
 
@@ -257,15 +220,15 @@ def find_route(req: RouteRequest):
             for i in range(len(nodes)-1):
                 u, v = nodes[i], nodes[i+1]
                 
-                # ── 3. Update summary to also use dynamic cost ───────────
+                # THE FIX: Use the specific hour for the summary math
                 bk = min(G[u][v], key=lambda k: thermal_cost(
                     float(G[u][v][k].get("length", 50)),
-                    float(G[u][v][k].get("shade_score", 0.15)),
+                    float(G[u][v][k].get("shade_hourly", {}).get(request_hour, 0.15)),
                     solar["heat_penalty"]
                 ))
                 d  = G[u][v][bk]
                 seg_len = float(d.get("length", 0))
-                shade = float(d.get("shade_score", 0.15))
+                shade = float(d.get("shade_hourly", {}).get(request_hour, 0.15))
 
                 total_len += seg_len
                 weighted_shades += (shade * seg_len)
