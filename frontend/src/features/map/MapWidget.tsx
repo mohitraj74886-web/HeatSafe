@@ -1,6 +1,6 @@
 // src/features/map/MapWidget.tsx
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css'; // CRITICAL: Leaflet will break without this
+import 'leaflet/dist/leaflet.css'; 
 import type { RouteFeature } from '../../types/geojson';
 
 interface MapWidgetProps {
@@ -11,8 +11,8 @@ interface MapWidgetProps {
 }
 
 export default function MapWidget({ routeData }: MapWidgetProps) {
-  // Default center (Update this to a coordinate relevant to your project)
-  const defaultCenter: [number, number] = [28.6139, 77.2090]; // Example: New Delhi
+  
+  const defaultCenter: [number, number] = [28.6139, 77.2090]; 
 
   return (
     <div className="w-full h-[500px] border-2 border-gray-200 rounded-lg overflow-hidden shadow-md">
@@ -21,13 +21,13 @@ export default function MapWidget({ routeData }: MapWidgetProps) {
         zoom={13} 
         style={{ height: '100%', width: '100%' }}
       >
-        {/* Free OpenStreetMap Tiles */}
+        
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {/* Render the route if we have data */}
+        
         {routeData && (
           <GeoJSON 
             key={JSON.stringify(routeData)} 
@@ -37,10 +37,10 @@ export default function MapWidget({ routeData }: MapWidgetProps) {
               weight: 6,
               opacity: 0.8
             })}
-            // ADD THIS NEW BLOCK:
+            
             onEachFeature={(feature, layer) => {
               if (feature.properties) {
-                // This grabs whatever data your friend attached to the street
+                
                 const props = feature.properties;
                 layer.bindPopup(`
                   <div class="p-2">

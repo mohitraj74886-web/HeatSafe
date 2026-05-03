@@ -63,7 +63,7 @@ export default function App() {
                 <input type="number" step="any" value={destLon} onChange={(e) => setDestLon(e.target.value)} className="w-full px-3 py-2 border rounded-md" />
               </div>
               
-              {/* NEW TIME OF DAY INPUT */}
+              
               <div className="md:col-span-1">
                 <label className="block text-sm font-medium text-gray-700 text-blue-600">Time (0-23h)</label>
                 <input 
