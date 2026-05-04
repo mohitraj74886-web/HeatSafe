@@ -38,8 +38,8 @@ TIMEZONE = os.getenv("HEATSAFE_TZ",   "Asia/Kolkata")
 CRS      = "EPSG:32644"
 
 W_DIST = 1.0
-W_HEAT = 20.0
-W_TIME = 5.0
+W_HEAT = 120.0
+W_TIME = 20
 
 APP_STATE = {}
 
