@@ -1,27 +1,21 @@
 """
 HeatSafe Navigator — Routing API
 FastAPI endpoint wrapping the ThermalRouteOptimizer.
-
-Run:
-    uvicorn app:app --reload --port 8001
 """
 
-import os, json, math, time, logging
+import os, math, logging, pickle
 from pathlib import Path
 from datetime import datetime
 from typing import Optional, List
 from contextlib import asynccontextmanager
 
-import numpy as np
-import joblib
-import requests
-import osmnx as ox
 import networkx as nx
 import geopandas as gpd
 from shapely.geometry import Point, mapping, LineString
 import pvlib
 from pvlib import location as pvloc
 import pandas as pd
+import osmnx as ox
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -30,8 +24,12 @@ from pydantic import BaseModel, Field
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("heatsafe.routing.api")
 
+# ─── Config & Paths ───────────────────────────────────────────────────
+# __file__ is in routing/api/app.py. 
+# .parent is api/
+# .parent.parent is routing/
 BASE_DIR     = Path(__file__).parent.parent
-SHADE_DIR    = BASE_DIR.parent / "shade_model" / "artifacts"
+ARTIFACT_DIR = BASE_DIR / "artifacts"
 
 CITY     = os.getenv("HEATSAFE_CITY",  "Dehradun, Uttarakhand, India")
 LAT      = float(os.getenv("HEATSAFE_LAT",  "30.3165"))
@@ -40,22 +38,10 @@ TIMEZONE = os.getenv("HEATSAFE_TZ",   "Asia/Kolkata")
 CRS      = "EPSG:32644"
 
 W_DIST = 1.0
-W_HEAT = 20.0
-W_TIME = 5.0
+W_HEAT = 120.0
+W_TIME = 20
 
 APP_STATE = {}
-
-def load_shade_model():
-    model    = joblib.load(SHADE_DIR / "shade_model.joblib")
-    scaler   = joblib.load(SHADE_DIR / "scaler.joblib")
-    encoders = joblib.load(SHADE_DIR / "label_encoders.joblib")
-    with open(SHADE_DIR / "model_metadata.json") as f:
-        meta = json.load(f)
-    return {"model": model, "scaler": scaler, "encoders": encoders,
-            "features": meta["features"], "highway_proxy": meta["highway_width_proxy"],
-            "surface_factor": meta["surface_shade_factor"],
-            "highway_classes": meta["highway_classes"],
-            "surface_classes": meta["surface_classes"]}
 
 def get_solar(lat, lon, hour=None):
     site = pvloc.Location(lat, lon, tz=TIMEZONE, altitude=700)
@@ -68,46 +54,6 @@ def get_solar(lat, lon, hour=None):
             "heat_penalty": max(0.0, math.sin(math.radians(max(elev, 0)))) ** 0.5,
             "hour": hour}
 
-def score_edge(data, geom, art, solar):
-    def safe_first(v): return v[0] if isinstance(v, list) else v
-    hw   = safe_first(data.get("highway", "unclassified"))
-    sf   = safe_first(data.get("surface",  "asphalt"))
-    length = float(data.get("length", 50))
-    hw   = hw if hw in art["highway_proxy"] else "unclassified"
-    sf   = sf if sf in art["surface_factor"] else "asphalt"
-    w    = art["highway_proxy"].get(hw, 5.0)
-    sfac = art["surface_factor"].get(sf, 0.1)
-    le_hw = art["encoders"]["highway"]
-    le_sf = art["encoders"]["surface"]
-    hw_safe = hw if hw in art["highway_classes"] else art["highway_classes"][0]
-    sf_safe = sf if sf in art["surface_classes"] else art["surface_classes"][0]
-    hw_enc = int(le_hw.transform([hw_safe])[0])
-    sf_enc = int(le_sf.transform([sf_safe])[0])
-    elev = solar["elevation_deg"]
-    az   = solar["azimuth_deg"]
-    orient = 90.0
-    if geom and len(list(geom.coords)) >= 2:
-        coords = list(geom.coords)
-        dx, dy = coords[-1][0]-coords[0][0], coords[-1][1]-coords[0][1]
-        orient = math.degrees(math.atan2(dx, dy)) % 180
-    shadow = 0.0
-    if elev > 0:
-        sl = 6.0 / math.tan(math.radians(elev))
-        of = abs(math.sin(math.radians(az) - math.radians(orient)))
-        shadow = min(sl * of, 50) / (w/2 + min(sl * of, 50) + 1e-6)
-    fmap = {
-        "road_width": w, "road_orientation_deg": orient, "is_oneway": int(bool(data.get("oneway", False))),
-        "highway_enc": hw_enc, "surface_enc": sf_enc, "surface_factor": sfac,
-        "building_height_mean": 6.0, "shadow_mean": shadow, "shadow_peak": shadow,
-        "shadow_min": shadow*0.5, "shadow_noon": shadow,
-        "sun_elevation_noon": max(elev, 0),
-        "length_m_log": math.log1p(length), "tree_count_log": 0.0,
-        "tree_density_log": 0.0, "building_count_log": 0.0,
-    }
-    row = np.array([fmap.get(f, 0.0) for f in art["features"]]).reshape(1, -1)
-    row_s = art["scaler"].transform(row)
-    return float(min(max(art["model"].predict(row_s)[0], 0.0), 1.0))
-
 def thermal_cost(length, shade, solar_pen):
     base_cost = length * W_DIST
     heat_exposure = 1.0 - shade
@@ -118,32 +64,18 @@ def thermal_cost(length, shade, solar_pen):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("⏳ Loading shade model...")
-    art = load_shade_model()
-    APP_STATE["artifacts"] = art
+    logger.info("⏳ Loading pre-baked graph from artifacts folder...")
+    
+    graph_path = ARTIFACT_DIR / "baked_graph.pkl"
+    if not graph_path.exists():
+        logger.error(f"❌ Could not find {graph_path}. Make sure baked_graph.pkl is in the artifacts folder!")
+        raise FileNotFoundError(f"Missing {graph_path}")
 
-    logger.info(f"⏳ Downloading street network: {CITY}")
-    G_raw = ox.graph_from_place(CITY, network_type="walk", simplify=True)
-    G = ox.project_graph(G_raw, to_crs=CRS)
-
-    logger.info("⏳ Pre-scoring all edges for 24 hours (this may take a minute)...")
-    # THE FIX: Calculate sun positions for all 24 hours
-    solar_profiles = {h: get_solar(LAT, LON, h) for h in range(8,19)}
-
-    for u, v, k, data in G.edges(data=True, keys=True):
-        geom = data.get("geometry", None)
-        
-        # THE FIX: Create a dictionary of 24 sticky notes for this street
-        shade_hourly = {}
-        for h in range(8,19):
-            shade = score_edge(data, geom, art, solar_profiles[h])
-            shade_hourly[h] = round(shade, 4)
-            
-        G[u][v][k]["shade_hourly"] = shade_hourly
-        G[u][v][k]["length"] = float(data.get("length", 50))
+    with open(graph_path, "rb") as f:
+        G = pickle.load(f)
 
     APP_STATE["G"] = G
-    logger.info(f"✅ Ready — {G.number_of_edges():,} edges scored for 24 hours")
+    logger.info(f"✅ Ready — Loaded {G.number_of_edges():,} pre-scored edges.")
     yield
     APP_STATE.clear()
 
@@ -179,12 +111,12 @@ def _geocode(name: str) -> tuple:
 
 @app.post("/route")
 def find_route(req: RouteRequest):
-    G   = APP_STATE.get("G")
+    G = APP_STATE.get("G")
     if G is None: raise HTTPException(503, "Graph not loaded yet")
 
     try:
         solar = get_solar(LAT, LON, req.hour)
-        request_hour = solar["hour"] # THE FIX: Store the requested hour
+        request_hour = solar["hour"]
 
         if req.origin_name: o_lat, o_lon = _geocode(req.origin_name)
         elif req.origin_lat is not None and req.origin_lon is not None: o_lat, o_lon = req.origin_lat, req.origin_lon
@@ -202,7 +134,8 @@ def find_route(req: RouteRequest):
         def dynamic_thermal_weight(u, v, edge_data):
             min_cost = float('inf')
             for k, d in edge_data.items():
-                # THE FIX: Get the shade for THIS SPECIFIC HOUR
+                # Get the pre-calculated shade score for the requested hour
+                # If hour isn't in 8-18 (e.g. night time), default to 0.15
                 shade = float(d.get("shade_hourly", {}).get(request_hour, 0.15))
                 length = float(d.get("length", 50))
                 cost = thermal_cost(length, shade, solar["heat_penalty"])
@@ -220,7 +153,6 @@ def find_route(req: RouteRequest):
             for i in range(len(nodes)-1):
                 u, v = nodes[i], nodes[i+1]
                 
-                # THE FIX: Use the specific hour for the summary math
                 bk = min(G[u][v], key=lambda k: thermal_cost(
                     float(G[u][v][k].get("length", 50)),
                     float(G[u][v][k].get("shade_hourly", {}).get(request_hour, 0.15)),
