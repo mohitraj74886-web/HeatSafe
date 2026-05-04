@@ -1,27 +1,28 @@
 // src/types/geojson.d.ts
 
-export interface RouteProperties {
-  color: string;
-  distance_km?: number;
-  shade_score?: number;
-}
-
 export interface RouteFeature {
   type: "Feature";
-  properties: RouteProperties;
-  geometry: {
-    type: "LineString";
-    coordinates: number[][]; // Array of [longitude, latitude] arrays
+  properties: {
+    shade_score?: number;
+    color?: string;
+    distance_m?: number;
+    [key: string]: any;
   };
+  geometry: any;
 }
 
 export interface RouteResponse {
-  geojson_cool_route: {
-    type: "FeatureCollection";
-    features: RouteFeature[];
-  };
+  shelters: { type: "FeatureCollection"; features: any[]; } | undefined;
+  geojson_cool_route: { type: "FeatureCollection"; features: RouteFeature[] };
+  geojson_short_route?: { type: "FeatureCollection"; features: RouteFeature[] };
+  geojson_shelters?: { type: "FeatureCollection"; features: any[] };
   comparison?: {
-    standard_route: any;
-    cool_route: any;
+    shade_improvement_pct: number;
+    extra_distance_m: number;
+    extra_distance_pct: number;
+  };
+  cool_route?: {
+    total_length_m: number;
+    mean_shade_score: number;
   };
 }

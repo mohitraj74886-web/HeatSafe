@@ -128,14 +128,14 @@ async def lifespan(app: FastAPI):
 
     logger.info("⏳ Pre-scoring all edges for 24 hours (this may take a minute)...")
     # THE FIX: Calculate sun positions for all 24 hours
-    solar_profiles = {h: get_solar(LAT, LON, h) for h in range(24)}
+    solar_profiles = {h: get_solar(LAT, LON, h) for h in range(8,19)}
 
     for u, v, k, data in G.edges(data=True, keys=True):
         geom = data.get("geometry", None)
         
         # THE FIX: Create a dictionary of 24 sticky notes for this street
         shade_hourly = {}
-        for h in range(24):
+        for h in range(8,19):
             shade = score_edge(data, geom, art, solar_profiles[h])
             shade_hourly[h] = round(shade, 4)
             

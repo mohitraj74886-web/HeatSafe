@@ -2,35 +2,24 @@
 import type { RouteResponse } from '../types/geojson';
 
 export const fetchCoolRoute = async (
-  originLat: number, 
-  originLon: number, 
-  destLat: number, 
-  destLon: number,
-  hour:number,
+  origin: string, 
+  destination: string, 
+  hour: number
 ): Promise<RouteResponse | null> => {
   try {
     const response = await fetch('/api/route', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      // Sending EXACTLY what the FastAPI backend requested:
-      body: JSON.stringify({ 
-        origin_lat: originLat,
-        origin_lon: originLon,
-        dest_lat: destLat,
-        dest_lon: destLon,
-        hour: hour, // 14 = 2:00 PM (peak heat for a good test!)
+      headers: { 'Content-Type': 'application/json' },
+     body: JSON.stringify({ 
+        origin_name: origin,       // Changed to match backend exactly
+        dest_name: destination,    // Changed to match backend exactly
+        hour: hour,
         include_geojson: true 
       }),
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data: RouteResponse = await response.json();
-    return data;
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
   } catch (error) {
     console.error("Failed to fetch route:", error);
     return null;
