@@ -55,10 +55,18 @@ def get_solar(lat, lon, hour=None):
             "hour": hour}
 
 def thermal_cost(length, shade, solar_pen):
-    base_cost = length * W_DIST
+    
+    base_cost = length * 1.0
     heat_exposure = 1.0 - shade
-    time_penalty  = heat_exposure * solar_pen
-    penalty_multiplier = (W_HEAT * heat_exposure) + (W_TIME * time_penalty)
+    
+    exponential_heat = heat_exposure ** 3 
+    
+    # Use massive weights
+    W_HEAT_DEMO = 500.0 
+    
+    penalty_multiplier = (W_HEAT_DEMO * exponential_heat)
+    
+    # Total cost = base distance + massive penalty for sun
     total_cost = base_cost + (length * penalty_multiplier)
     return round(total_cost, 6)
 
