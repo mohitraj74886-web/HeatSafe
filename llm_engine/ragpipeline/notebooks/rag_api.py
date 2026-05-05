@@ -25,13 +25,13 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-from langchain.schema import Document
+from langchain_core.documents import Document
 from langchain_community.document_loaders import PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 from langchain_groq import ChatGroq
-from langchain.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from rank_bm25 import BM25Okapi
 
 load_dotenv()
@@ -73,9 +73,9 @@ CONTEXT FROM DOCUMENTS:
 {context}
 ─────────────────────────────────────────────────────────"""
 
-HUMAN_PROMPT = "Question: {question}
+HUMAN_PROMPT = """Question: {question}
 
-Answer based only on the document context above."
+Answer based only on the document context above."""
 
 # ─── App State ────────────────────────────────────────────────────────
 STATE = {}
@@ -119,8 +119,7 @@ async def lifespan(app):
     # Embeddings + vector store
     embed = HuggingFaceEmbeddings(
         model_name="BAAI/bge-small-en-v1.5",
-        encode_kwargs={"normalize_embeddings": True},
-        query_instruction="Represent this sentence for retrieval: ",
+        encode_kwargs={"normalize_embeddings": True}
     )
     VS_DIR.mkdir(parents=True, exist_ok=True)
     vs_exists = (VS_DIR / "chroma.sqlite3").exists()
