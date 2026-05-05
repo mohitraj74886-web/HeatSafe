@@ -3,7 +3,7 @@ HeatSafe Navigator — RAG API
 FastAPI serving the hybrid RAG chain.
 
 Run:
-    uvicorn app:app --reload --port 8002
+    uvicorn rag_api:app --reload --port 8002
 
 Endpoints:
     GET  /health         → API status
@@ -34,48 +34,62 @@ from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from rank_bm25 import BM25Okapi
 
+# Import your custom schemas for the Heat Strain Analysis
+import sys
+from pathlib import Path
+
+BASE_DIR = Path(__file__).parent.parent.parent
+sys.path.append(str(BASE_DIR))
+
+# NOW you can import your custom schemas safely!
+from src.schemas import WorkerProfile, HeatStrainResult, RiskLevel
+
+
 load_dotenv()
 
 BASE_DIR   = Path(__file__).parent.parent
 DOCS_DIR   = BASE_DIR / "documents"
 VS_DIR     = BASE_DIR / "vector_store"
+ARTIFACTS_DIR = BASE_DIR / "artifacts"
 GROQ_KEY   = os.getenv("GROQ_API_KEY", "")
 
 PDF_FILES  = [
     "climate_change(WHO).pdf",
     "heat_safety(osha).pdf",
-    "niosh(controlling_illness_outd....pdf",
+    "niosh(controlling_illness_outdoor_workers).pdf",
     "niosh(heat & hot).pdf",
 ]
 
 SOURCE_MAP  = {
     "climate_change(WHO).pdf"                : "WHO Climate & Health",
     "heat_safety(osha).pdf"                   : "OSHA Heat Safety Manual",
-    "niosh(controlling_illness_outd....pdf"   : "NIOSH Controlling Heat Illness",
+    "niosh(controlling_illness_outdoor_workers).pdf"   : "NIOSH Controlling Heat Illness",
     "niosh(heat & hot).pdf"                   : "NIOSH 2016-106 Heat Standard",
 }
 
 PRIORITY_MAP = {
     "niosh(heat & hot).pdf"                 : 5,
-    "niosh(controlling_illness_outd....pdf" : 4,
+    "niosh(controlling_illness_outdoor_workers).pdf" : 4,
     "heat_safety(osha).pdf"                 : 3,
     "climate_change(WHO).pdf"               : 2,
 }
 
 SYSTEM_PROMPT = """You are HeatSafe, an AI assistant for outdoor worker heat safety in India.
-You answer questions using ONLY the provided document context.
-If the context doesn't contain the answer, say you cannot find it in the available guidelines.
-Always cite the source document. Quote exact numbers (temperatures, ml, minutes) from context.
-For emergencies mention 112.
+Answer the user's question directly, naturally, and conversationally using ONLY the provided context.
+
+🚨 CRITICAL RULES FOR YOUR RESPONSE 🚨:
+1. NEVER say "According to the document context" or "Based on the provided text".
+2. NEVER include inline citations like "[Source: NIOSH p.80]" or "[Source: OSHA]" in your text. 
+3. Start your answer immediately as a helpful expert.
+4. Quote exact numbers (temperatures, ml, minutes) from context.
+5. For emergencies, always mention calling 112.
 
 CONTEXT FROM DOCUMENTS:
 ─────────────────────────────────────────────────────────
 {context}
 ─────────────────────────────────────────────────────────"""
 
-HUMAN_PROMPT = """Question: {question}
-
-Answer based only on the document context above."""
+HUMAN_PROMPT = """Question: {question}"""
 
 # ─── App State ────────────────────────────────────────────────────────
 STATE = {}
@@ -93,6 +107,15 @@ def clean_text(text):
 @asynccontextmanager
 async def lifespan(app):
     print("Loading RAG pipeline...")
+    
+    # Load NIOSH Tables for the LLM Math (Only new addition here)
+    niosh_path = ARTIFACTS_DIR / "niosh_tables.json"
+    if niosh_path.exists():
+        with open(niosh_path, "r") as f:
+            STATE["niosh_tables"] = json.load(f)
+    else:
+        STATE["niosh_tables"] = {}
+
     # Load documents
     pages = []
     for fn in PDF_FILES:
@@ -167,6 +190,7 @@ class SourceRef(BaseModel):
     preview:    str
 
 class AskResponse(BaseModel):
+    type:             str = Field(default="rag") # ADDED so frontend knows what format it is
     answer:           str
     sources:          List[SourceRef]
     retrieval_ms:     float
@@ -206,14 +230,61 @@ def retrieve(query: str) -> List[Document]:
 
 def generate(question: str) -> dict:
     t0 = time.time()
+    llm = STATE["llm"]
+    
+    worker_keywords = ["farmer", "worker", "construction", "shift", "strain", "profile", "job", "labor"]
+    is_worker_query = any(w in question.lower() for w in worker_keywords)
+
+    # ─── PATH A: STRUCTURED WORKER ANALYSIS ───
+    if is_worker_query:
+        structured_llm = llm.with_structured_output(HeatStrainResult)
+        niosh_data = json.dumps(STATE.get("niosh_tables", {}), indent=2)
+        
+        analysis_prompt = f"""
+        Analyze the following worker request and generate a Heat Strain Analysis.
+        User Input: "{question}"
+        
+        USE THESE EXACT NIOSH STANDARDS TO CALCULATE YOUR OUTPUTS:
+        {niosh_data}
+        
+        Make safe, conservative estimates for WBGT, Risk Level, and required rest.
+        """
+        try:
+            result_obj = structured_llm.invoke(analysis_prompt)
+            generation_ms = (time.time() - t0) * 1000
+            
+            md_response = f"""### 🚨 Heat Strain Analysis
+* **Risk Level**: {result_obj.risk_level.upper()}
+* **WBGT (Adjusted)**: {result_obj.wbgt_adjusted_c}°C
+* **NIOSH Limit**: {result_obj.niosh_rel_c}°C ({round(result_obj.pct_of_rel)}% of limit)
+
+### ⏱️ Action Plan
+* **Max Continuous Work**: {result_obj.max_continuous_work_min} minutes
+* **Mandatory Rest**: {result_obj.required_rest_min_per_hr} minutes / hour
+* **Water Required**: {result_obj.water_intake_ml_per_hr} ml / hr
+* **Safe to Work?**: {"✅ YES" if result_obj.safe_to_work else "❌ NO — REST REQUIRED"}
+
+**Alert**: {result_obj.alert_en}"""
+            return {
+                "type": "analysis",
+                "answer": md_response,
+                "sources": [],
+                "retrieval_ms": 0.0,
+                "generation_ms": round(generation_ms, 1),
+                "total_ms": round(generation_ms, 1),
+                "chunks_retrieved": 0,
+                "model": "llama-3.3-70b-versatile (structured)",
+            }
+        except Exception as e:
+            print(f"Structured Output Failed, falling back to RAG. Error: {e}")
+
+    # ─── PATH B: STANDARD RAG ───
     top_chunks   = retrieve(question)
     retrieval_ms = (time.time() - t0) * 1000
 
     sorted_chunks = sorted(top_chunks, key=lambda c: c.metadata.get("priority", 1), reverse=True)
-    context = "\n\n".join(
-        f"[Source: {c.metadata.get('source_tag','Unknown')} p.{c.metadata.get('page','?')!s}]\n{c.page_content}"
-        for c in sorted_chunks
-    )
+    # Removed the [Source: XYZ] tag from the context text so the LLM doesn't see it or say it!
+    context = "\n\n".join(f"{c.page_content}" for c in sorted_chunks)
 
     messages = STATE["prompt"].format_messages(context=context, question=question)
     t_gen    = time.time()
@@ -228,6 +299,7 @@ def generate(question: str) -> dict:
     ]
 
     return {
+        "type": "rag",
         "answer": response.content.strip(),
         "sources": sources,
         "retrieval_ms": round(retrieval_ms, 1),
