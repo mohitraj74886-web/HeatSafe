@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import CommandCenter from './features/routing/CommandCenter';
 import MapSection from './features/map/MapSection';
 import AnalyticsPanel from './features/routing/AnalyticsPanel';
+import HeatSafeChatbot from './features/risk-profile/HeatSafeChatbot'; // <-- 1. IMPORT THE CHATBOT
 import { fetchCoolRoute } from './services/routeApi';
 import type { RouteState } from './types/route';
 
@@ -71,6 +72,9 @@ export default function App() {
         summaryData={routeState.summaryData}
         loading={loading}
       />
+
+      {/* 2. MOUNT THE CHATBOT HERE */}
+      <HeatSafeChatbot />
 
     </div>
   );
