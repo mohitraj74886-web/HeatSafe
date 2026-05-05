@@ -43,7 +43,7 @@ numpy
 matplotlib 
 seaborn 
 tqdm
-pip install langchain-huggingface
+langchain-huggingface
  
 # ── FastAPI ───────────────────────────────────────────────────
 fastapi
