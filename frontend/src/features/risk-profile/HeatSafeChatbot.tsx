@@ -77,9 +77,7 @@ export default function HeatSafeChatbot() {
 
   return (
     <>
-      {/* ───────────────────────────────────────────────────────── */}
-      {/* FLOATING TOGGLE BUTTON                                    */}
-      {/* ───────────────────────────────────────────────────────── */}
+      
       <motion.button
         initial={{ scale: 0 }}
         animate={{ scale: isOpen ? 0 : 1 }}
@@ -89,9 +87,7 @@ export default function HeatSafeChatbot() {
         <MessageSquare className="h-6 w-6" />
       </motion.button>
 
-      {/* ───────────────────────────────────────────────────────── */}
-      {/* CHAT WINDOW INTERFACE                                     */}
-      {/* ───────────────────────────────────────────────────────── */}
+     
       <AnimatePresence>
         {isOpen && (
           <motion.div

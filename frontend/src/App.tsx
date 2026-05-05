@@ -1,13 +1,18 @@
 // src/App.tsx
 import React, { useState } from 'react';
+import { MessageSquareText } from 'lucide-react';
 import CommandCenter from './features/routing/CommandCenter';
 import MapSection from './features/map/MapSection';
 import AnalyticsPanel from './features/routing/AnalyticsPanel';
-import HeatSafeChatbot from './features/risk-profile/HeatSafeChatbot'; // <-- 1. IMPORT THE CHATBOT
+import HeatSafeChatPage from './features/risk-profile/HeatSafeChatPage';
+import HeatSafeLanding from './features/landing/HeatSafeLanding'; // <-- 1. IMPORT LANDING PAGE
 import { fetchCoolRoute } from './services/routeApi';
 import type { RouteState } from './types/route';
 
 export default function App() {
+  // 2. Add 'landing' as the default view
+  const [view, setView] = useState<'landing' | 'map' | 'chat'>('landing');
+
   const [origin, setOrigin] = useState('Clock Tower, Dehradun');
   const [destination, setDestination] = useState('ISBT Dehradun');
   const [hour, setHour] = useState<string>('14');
@@ -50,6 +55,19 @@ export default function App() {
     }
   };
 
+  // 3. CONDITIONAL RENDERING ARCHITECTURE
+  
+  // Show the Landing Page first
+  if (view === 'landing') {
+    return <HeatSafeLanding onLaunch={() => setView('map')} />;
+  }
+
+  // Show the Full-Screen Chat if requested
+  if (view === 'chat') {
+    return <HeatSafeChatPage onBack={() => setView('map')} />;
+  }
+
+  // Otherwise, show the main Map Dashboard
   return (
     <div className="flex h-screen w-full bg-zinc-950 text-zinc-100 font-sans overflow-hidden selection:bg-emerald-500/30">
       
@@ -73,8 +91,13 @@ export default function App() {
         loading={loading}
       />
 
-      {/* 2. MOUNT THE CHATBOT HERE */}
-      <HeatSafeChatbot />
+      {/* Floating button to open the full-screen AI chat */}
+      <button
+        onClick={() => setView('chat')}
+        className="fixed bottom-8 right-8 z-50 px-6 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold rounded-full flex items-center gap-2.5 shadow-[0_0_24px_rgba(16,185,129,0.4)] transition-all hover:scale-105 active:scale-95"
+      >
+        <MessageSquareText className="h-5 w-5" /> Open HeatSafe AI
+      </button>
 
     </div>
   );
