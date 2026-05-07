@@ -1,7 +1,7 @@
 // src/features/risk-profile/HeatSafeChatPage.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Bot, User, Loader2, BookOpen, Sun, Moon, ArrowLeft } from 'lucide-react';
+import { Send, Bot, User, Loader2, BookOpen, Sun, Moon, ArrowLeft, Lightbulb } from 'lucide-react';
 
 interface SourceRef {
   source_tag: string;
@@ -16,6 +16,38 @@ interface Message {
   sources?: SourceRef[];
 }
 
+
+const SUGGESTIONS = [
+  "road worker", // Very Heavy
+  "Construction Workers", // Heavy
+  "Delivery Person", // Moderate
+  "street vendor" // Light
+];
+
+const CrispCloud = ({ speed, delay, scale, y, opacity, isNightMode }: any) => {
+  const gradient = isNightMode 
+    ? "bg-gradient-to-b from-slate-700 via-slate-800 to-slate-950" 
+    : "bg-gradient-to-b from-white via-slate-50 to-slate-200";
+
+  return (
+    <motion.div
+      initial={{ x: '-20vw' }}
+      animate={{ x: '120vw' }}
+      transition={{ duration: speed, repeat: Infinity, ease: "linear", delay: delay }}
+      className={`absolute pointer-events-none ${isNightMode ? 'drop-shadow-2xl' : 'drop-shadow-xl'}`}
+      style={{ top: y, scale: scale, opacity: opacity }}
+    >
+      <div className="relative w-64 h-24">
+        <div className={`absolute top-8 left-0 w-24 h-24 ${gradient} rounded-full`}></div>
+        <div className={`absolute top-0 left-12 w-32 h-32 ${gradient} rounded-full`}></div>
+        <div className={`absolute top-4 left-32 w-28 h-28 ${gradient} rounded-full`}></div>
+        <div className={`absolute top-10 left-48 w-20 h-20 ${gradient} rounded-full`}></div>
+        <div className={`absolute top-12 left-8 w-48 h-16 ${gradient} rounded-full`}></div>
+      </div>
+    </motion.div>
+  );
+};
+
 export default function HeatSafeChatPage({ onBack }: { onBack?: () => void }) {
   const [isNightMode, setIsNightMode] = useState(false);
   const [input, setInput] = useState('');
@@ -25,23 +57,21 @@ export default function HeatSafeChatPage({ onBack }: { onBack?: () => void }) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const dayVideoRef = useRef<HTMLVideoElement>(null);
 
-  // Auto-scroll to bottom of chat
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Slow down the day video playback speed
   useEffect(() => {
     if (dayVideoRef.current) {
-      dayVideoRef.current.playbackRate = 0.5; // 0.5 = 50% speed. Change this value to adjust speed.
+      dayVideoRef.current.playbackRate = 0.5;
     }
   }, []);
 
-  const handleSend = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
+  // Centralized send function so both the form and the suggestion chips can use it
+  const sendMessage = async (text: string) => {
+    if (!text.trim() || isLoading) return;
 
-    const userMessage: Message = { id: Date.now().toString(), role: 'user', text: input.trim() };
+    const userMessage: Message = { id: Date.now().toString(), role: 'user', text: text.trim() };
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
@@ -74,55 +104,41 @@ export default function HeatSafeChatPage({ onBack }: { onBack?: () => void }) {
     }
   };
 
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    sendMessage(input);
+  };
+
   const hasMessages = messages.length > 0;
 
   return (
     <div className={`relative h-screen w-full overflow-hidden transition-colors duration-1000 ${
       isNightMode ? 'bg-[#09152b] text-zinc-100' : 'bg-sky-100 text-sky-950'
     }`}>
-      
-      {/* ───────────────────────────────────────────────────────── */}
-      {/* DYNAMIC VIDEO BACKGROUND LAYER                            */}
-      {/* ───────────────────────────────────────────────────────── */}
+
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none bg-zinc-950">
-        
-        {/* Night Video Layer */}
         <motion.video
-          autoPlay 
-          loop 
-          muted 
-          playsInline
+          autoPlay loop muted playsInline
           animate={{ opacity: isNightMode ? 1 : 0 }}
           transition={{ duration: 1.5, ease: "easeInOut" }}
           className="absolute inset-0 w-full h-full object-cover"
           src="/videos/night.mp4"
         />
-        
-        {/* Day Video Layer (With Ref for Speed Control) */}
         <motion.video
           ref={dayVideoRef}
-          autoPlay 
-          loop 
-          muted 
-          playsInline
+          autoPlay loop muted playsInline
           animate={{ opacity: isNightMode ? 0 : 1 }}
           transition={{ duration: 1.5, ease: "easeInOut" }}
           className="absolute inset-0 w-full h-full object-cover"
           src="/videos/day.mp4"
         />
-
-        {/* Color Overlay (Ensures the white chat text remains readable regardless of how bright the video gets) */}
         <motion.div 
-          animate={{ 
-            backgroundColor: isNightMode ? 'rgba(11, 29, 58, 0.6)' : 'rgba(255, 255, 255, 0.1)' 
-          }}
+          animate={{ backgroundColor: isNightMode ? 'rgba(11, 29, 58, 0.6)' : 'rgba(255, 255, 255, 0.1)' }}
           className="absolute inset-0 transition-colors duration-1000"
         />
       </div>
 
-      {/* ───────────────────────────────────────────────────────── */}
-      {/* TOP NAVIGATION & CONTROLS                                 */}
-      {/* ───────────────────────────────────────────────────────── */}
+     
       <div className="relative z-20 flex justify-between items-center p-6 max-w-5xl mx-auto">
         <button 
           onClick={onBack}
@@ -143,9 +159,7 @@ export default function HeatSafeChatPage({ onBack }: { onBack?: () => void }) {
         </button>
       </div>
 
-      {/* ───────────────────────────────────────────────────────── */}
-      {/* MAIN CHAT INTERFACE                                       */}
-      {/* ───────────────────────────────────────────────────────── */}
+      
       <div className="relative z-10 flex flex-col h-[calc(100vh-100px)] max-w-4xl mx-auto px-4">
         
         <motion.div 
@@ -161,10 +175,35 @@ export default function HeatSafeChatPage({ onBack }: { onBack?: () => void }) {
           }`}>
             HeatSafe Intelligence
           </h1>
+          
+          {/* Welcome Text & Suggestion Chips (Only visible when no messages exist) */}
           {!hasMessages && (
-            <p className={`text-lg md:text-xl font-medium drop-shadow-sm ${isNightMode ? 'text-cyan-100/70' : 'text-white/90'}`}>
-              What safety guidelines can I help you find today?
-            </p>
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+              className="flex flex-col items-center"
+            >
+              <p className={`text-lg md:text-xl font-medium drop-shadow-sm mb-8 ${isNightMode ? 'text-cyan-100/70' : 'text-white/90'}`}>
+                What safety guidelines can I help you find today?
+              </p>
+              
+              <div className="flex flex-wrap justify-center gap-3 max-w-2xl">
+                {SUGGESTIONS.map((suggestion, index) => (
+                  <button
+                    key={index}
+                    onClick={() => sendMessage(suggestion)}
+                    disabled={isLoading}
+                    className={`text-sm px-4 py-2.5 rounded-full backdrop-blur-md transition-all flex items-center gap-2 border shadow-lg ${
+                      isNightMode 
+                        ? 'bg-[#0F2646]/80 text-cyan-100 border-[#1C436D] hover:bg-[#163863]' 
+                        : 'bg-white/60 text-sky-900 border-white/50 hover:bg-white/80'
+                    } disabled:opacity-50 hover:scale-105 active:scale-95`}
+                  >
+                    <Lightbulb className={`h-3.5 w-3.5 ${isNightMode ? 'text-cyan-400' : 'text-amber-500'}`} />
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
           )}
         </motion.div>
 
@@ -247,7 +286,7 @@ export default function HeatSafeChatPage({ onBack }: { onBack?: () => void }) {
 
         {/* Input Dock */}
         <motion.div layout className="absolute bottom-8 left-0 right-0 px-4">
-          <form onSubmit={handleSend} className={`relative flex items-center max-w-3xl mx-auto rounded-2xl shadow-2xl backdrop-blur-2xl border transition-colors ${
+          <form onSubmit={handleFormSubmit} className={`relative flex items-center max-w-3xl mx-auto rounded-2xl shadow-2xl backdrop-blur-2xl border transition-colors ${
             isNightMode ? 'bg-[#0B1D3A]/90 border-[#1C436D] focus-within:border-cyan-400/50' : 'bg-white/70 border-white/60 focus-within:border-emerald-400'
           }`}>
             <input
