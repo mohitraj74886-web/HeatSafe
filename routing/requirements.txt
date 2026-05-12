@@ -1,0 +1,17 @@
+# ── FastAPI Web Framework ──
+fastapi
+uvicorn[standard]
+pydantic
+
+# ── Geospatial & Graph Math ──
+networkx
+osmnx
+geopandas
+shapely
+pvlib
+pandas
+numpy
+
+# ── Utils ──
+python-dotenv
+requests
