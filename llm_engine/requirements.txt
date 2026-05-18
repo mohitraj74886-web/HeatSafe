@@ -1,0 +1,26 @@
+# ── FastAPI Web Framework ──
+fastapi
+uvicorn[standard]
+pydantic
+
+# ── LLM & Structured Outputs ──
+groq
+
+# ── RAG Pipeline & Vector DB ──
+chromadb
+pypdf
+langchain
+langchain-core
+langchain-community
+langchain-huggingface
+langchain-chroma
+langchain-groq
+langchain-text-splitters
+rank-bm25
+sentence-transformers
+tiktoken
+
+# ── Utils ──
+python-dotenv
+requests
+numpy
