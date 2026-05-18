@@ -11,7 +11,7 @@ shapely
 pvlib
 pandas
 numpy
-
+matplotlib
 # ── Utils ──
 python-dotenv
 requests
