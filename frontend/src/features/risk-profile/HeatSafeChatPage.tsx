@@ -56,6 +56,7 @@ export default function HeatSafeChatPage({ onBack }: { onBack?: () => void }) {
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const dayVideoRef = useRef<HTMLVideoElement>(null);
+  const LLM_API = import.meta.env.VITE_LLM_API
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -77,7 +78,7 @@ export default function HeatSafeChatPage({ onBack }: { onBack?: () => void }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8002/ask', {
+      const response = await fetch(`${LLM_API}/ask`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question: userMessage.text, language: 'en' }),

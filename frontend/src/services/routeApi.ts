@@ -1,13 +1,15 @@
 // src/services/routeApi.ts
 import type { RouteResponse } from '../types/geojson';
 
+const API_URL = import.meta.env.VITE_MAP_API;
+
 export const fetchCoolRoute = async (
   origin: string, 
   destination: string, 
   hour: number
 ): Promise<RouteResponse | null> => {
   try {
-    const response = await fetch('/api/route', {
+    const response = await fetch(`${API_URL}/route`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
      body: JSON.stringify({ 
