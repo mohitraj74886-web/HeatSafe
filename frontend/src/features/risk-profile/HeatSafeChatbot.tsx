@@ -1,5 +1,5 @@
 // src/features/risk-profile/HeatSafeChatbot.tsx
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, X, Send, Bot, User, Loader2, BookOpen } from 'lucide-react';
 

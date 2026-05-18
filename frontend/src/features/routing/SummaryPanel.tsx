@@ -1,5 +1,5 @@
 // src/features/routing/SummaryPanel.tsx
-import React from 'react';
+
 import { TrendingUp, Route, Footprints, ShieldCheck } from 'lucide-react';
 import type { RouteSummaryData } from '../../types/route';
 

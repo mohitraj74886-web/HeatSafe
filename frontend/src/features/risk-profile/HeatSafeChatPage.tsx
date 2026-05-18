@@ -1,5 +1,5 @@
 // src/features/risk-profile/HeatSafeChatPage.tsx
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Bot, User, Loader2, BookOpen, Sun, Moon, ArrowLeft, Lightbulb } from 'lucide-react';
 
@@ -23,30 +23,6 @@ const SUGGESTIONS = [
   "Delivery Person", // Moderate
   "street vendor" // Light
 ];
-
-const CrispCloud = ({ speed, delay, scale, y, opacity, isNightMode }: any) => {
-  const gradient = isNightMode 
-    ? "bg-gradient-to-b from-slate-700 via-slate-800 to-slate-950" 
-    : "bg-gradient-to-b from-white via-slate-50 to-slate-200";
-
-  return (
-    <motion.div
-      initial={{ x: '-20vw' }}
-      animate={{ x: '120vw' }}
-      transition={{ duration: speed, repeat: Infinity, ease: "linear", delay: delay }}
-      className={`absolute pointer-events-none ${isNightMode ? 'drop-shadow-2xl' : 'drop-shadow-xl'}`}
-      style={{ top: y, scale: scale, opacity: opacity }}
-    >
-      <div className="relative w-64 h-24">
-        <div className={`absolute top-8 left-0 w-24 h-24 ${gradient} rounded-full`}></div>
-        <div className={`absolute top-0 left-12 w-32 h-32 ${gradient} rounded-full`}></div>
-        <div className={`absolute top-4 left-32 w-28 h-28 ${gradient} rounded-full`}></div>
-        <div className={`absolute top-10 left-48 w-20 h-20 ${gradient} rounded-full`}></div>
-        <div className={`absolute top-12 left-8 w-48 h-16 ${gradient} rounded-full`}></div>
-      </div>
-    </motion.div>
-  );
-};
 
 export default function HeatSafeChatPage({ onBack }: { onBack?: () => void }) {
   const [isNightMode, setIsNightMode] = useState(false);

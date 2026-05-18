@@ -22,7 +22,9 @@ export interface RouteResponse {
     extra_distance_pct: number;
   };
   cool_route?: {
-    total_length_m: number;
-    mean_shade_score: number;
-  };
+  total_length_m: number;
+  mean_shade_score: number;
+  heat_exposure_pct: number;
+  n_segments: number;
+};
 }

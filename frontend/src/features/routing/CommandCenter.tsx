@@ -1,5 +1,5 @@
 // src/features/routing/CommandCenter.tsx
-import React from 'react';
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { ThermometerSun, MapPin, Clock, Sun, Moon, Navigation, AlertCircle } from 'lucide-react';
 

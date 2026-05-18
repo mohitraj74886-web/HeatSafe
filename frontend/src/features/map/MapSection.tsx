@@ -1,5 +1,4 @@
 // src/features/map/MapSection.tsx
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Map as MapIcon } from 'lucide-react';
 import MapWidget from './MapWidget'; // Your existing robust map component

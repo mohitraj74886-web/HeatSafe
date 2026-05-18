@@ -1,5 +1,5 @@
 // src/features/routing/AnalyticsPanel.tsx
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Activity, CheckCircle2, ChevronRight, ChevronLeft } from 'lucide-react';
 import SummaryPanel from './SummaryPanel';
